@@ -1,7 +1,9 @@
 package carldav.bootstrap;
 
-import carldav.entity.User;
-import carldav.repository.UserRepository;
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -10,9 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.UUID;
-
-import static org.slf4j.LoggerFactory.getLogger;
+import carldav.entity.User;
+import carldav.repository.UserRepository;
 
 /**
  * @author Kamill Sokol
@@ -55,7 +56,6 @@ public class AdminUserCreator implements ApplicationListener<ContextRefreshedEve
 			LOG.info("admin user found. checking admin user password for '{}'", adminName);
 
 			if (!admin.getPassword().equals(adminPassword)) {
-				LOG.info("admin user password changed. setting to '{}'", adminPassword);
 				admin.setPassword(passwordEncoder.encode(adminPassword));
 				userRepository.save(admin);
 				LOG.info("admin user password changed");
