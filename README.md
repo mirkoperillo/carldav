@@ -12,6 +12,7 @@ So far caldav has been tested with the following clients:
 - [DAVdroid](https://play.google.com/store/apps/details?id=at.bitfire.davdroid) and [OpenTasks](https://play.google.com/store/apps/details?id=org.dmfs.tasks)
 - iOS iCalendar (version 4)
 
+
 Installation
 ------------
 
@@ -27,6 +28,8 @@ Installation
 
 Configuration
 -------------
+
+Configure debug logging defining a env var `LOG_LEVEL=DEBUG`. Default value: `INFO`.
 
 If not specified carldav will create a random admin password on every startup. Generated admin password can be found in the logs:
 `19:08:41.678 [main] INFO  carldav.bootstrap.AdminUserCreator - admin user 'root@localhost:test'`
