@@ -38,92 +38,93 @@ import java.text.ParseException;
  * 
  * <!ELEMENT time-range EMPTY>
  * 
- * <!ATTLIST time-range start CDATA #IMPLIED end CDATA #IMPLIED> 
- * start value: an iCalendar "date with UTC time" 
- * end value: an iCalendar "date with UTC time"
+ * <!ATTLIST time-range start CDATA #IMPLIED end CDATA #IMPLIED> start value: an
+ * iCalendar "date with UTC time" end value: an iCalendar "date with UTC time"
  */
 public class TimeRangeFilter implements CaldavConstants {
 
-    private Period period = null;
+	private Period period = null;
 
-    private VTimeZone timezone = null;
+	private VTimeZone timezone = null;
 
-    private DateTime dstart, dend;
+	private DateTime dstart, dend;
 
-    /**
-     * Constructor.
-     * @param period The period.
-     */
-    public TimeRangeFilter(Period period) {
-        setPeriod(period);
-    }
-    
-    /**
-     * Construct a TimeRangeFilter object from a DOM Element
-     * @param element The DOM Element.
-     * @throws ParseException - if something is wrong this exception is thrown.
-     */
-    public TimeRangeFilter(Element element, VTimeZone timezone) throws ParseException {
-        // Get start (must be present)
-        String start = DomUtils.getAttribute(element, ATTR_CALDAV_START);
-        if (start == null) {
-            throw new ParseException("CALDAV:comp-filter time-range requires a start time", -1);
-        }
+	/**
+	 * Constructor.
+	 * 
+	 * @param period The period.
+	 */
+	public TimeRangeFilter(Period period) {
+		setPeriod(period);
+	}
 
-        DateTime trstart = new DateTime(start);
-        if (! trstart.isUtc()) {
-            throw new ParseException("CALDAV:param-filter timerange start must be UTC", -1);
-        }
+	/**
+	 * Construct a TimeRangeFilter object from a DOM Element
+	 * 
+	 * @param element The DOM Element.
+	 * @throws ParseException - if something is wrong this exception is thrown.
+	 */
+	public TimeRangeFilter(Element element, VTimeZone timezone) throws ParseException {
+		// Get start (must be present)
+		String start = DomUtils.getAttribute(element, ATTR_CALDAV_START);
+		if (start == null) {
+			throw new ParseException("CALDAV:comp-filter time-range requires a start time", -1);
+		}
 
-        // Get end (must be present)
-        String end =
-                DomUtils.getAttribute(element, ATTR_CALDAV_END);
-        if (end == null) {
-            //add one year to date start Iphone ios7 bug
-            end = addOneYearToDateStart(start);
-            //throw new ParseException("CALDAV:comp-filter time-range requires an end time", -1); 
-        }
+		DateTime trstart = new DateTime(start);
+		if (!trstart.isUtc()) {
+			throw new ParseException("CALDAV:param-filter timerange start must be UTC", -1);
+		}
 
-        DateTime trend = new DateTime(end);
-        if (! trend.isUtc()) {
-            throw new ParseException("CALDAV:param-filter timerange end must be UTC", -1);
-        }
+		// Get end (must be present)
+		String end = DomUtils.getAttribute(element, ATTR_CALDAV_END);
+		if (end == null) {
+			// add one year to date start Iphone ios7 bug
+			end = addOneYearToDateStart(start);
+			// throw new ParseException("CALDAV:comp-filter time-range requires an end
+			// time", -1);
+		}
 
-        setPeriod(new Period(trstart, trend));
-        setTimezone(timezone);
-    }
+		DateTime trend = new DateTime(end);
+		if (!trend.isUtc()) {
+			throw new ParseException("CALDAV:param-filter timerange end must be UTC", -1);
+		}
 
-    private String addOneYearToDateStart(String start) {
-        String year = start.substring(0, 4);
-        
-        return Integer.parseInt(year) + 1 + start.substring(4);
-    }
+		setPeriod(new Period(trstart, trend));
+		setTimezone(timezone);
+	}
 
-    public Period getPeriod() {
-        return period;
-    }
+	private String addOneYearToDateStart(String start) {
+		String year = start.substring(0, 4);
 
-    public void setPeriod(Period period) {
-        this.period = period;
-        // Get fixed start/end time
-        dstart = period.getStart();
-        dend = period.getEnd();
-    }
+		return Integer.parseInt(year) + 1 + start.substring(4);
+	}
 
-    public String getUTCStart() {
-        return dstart.toString();
-    }
+	public Period getPeriod() {
+		return period;
+	}
 
-    public String getUTCEnd() {
-        return dend.toString();
-    }
+	public void setPeriod(Period period) {
+		this.period = period;
+		// Get fixed start/end time
+		dstart = period.getStart();
+		dend = period.getEnd();
+	}
 
-    public VTimeZone getTimezone() {
-        return timezone;
-    }
+	public String getUTCStart() {
+		return dstart.toString();
+	}
 
-    public void setTimezone(VTimeZone timezone) {
-        this.timezone = timezone;
-    }
+	public String getUTCEnd() {
+		return dend.toString();
+	}
+
+	public VTimeZone getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(VTimeZone timezone) {
+		this.timezone = timezone;
+	}
 
 }

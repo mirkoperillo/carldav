@@ -15,26 +15,25 @@
  */
 package org.unitedinternet.cosmo.icalendar;
 
-
 /**
- * Provides constants for values specified by iCalendar that are not
- * otherwise defined by iCal4J.
+ * Provides constants for values specified by iCalendar that are not otherwise
+ * defined by iCal4J.
  */
 public interface ICalendarConstants {
 
-    /**
-     * The highest version number of the iCalendar specification that
-     * is implemented by Cosmo.
-     */
-    String ICALENDAR_VERSION = "2.0";
+	/**
+	 * The highest version number of the iCalendar specification that is implemented
+	 * by Cosmo.
+	 */
+	String ICALENDAR_VERSION = "2.0";
 
-    /**
-     * The MIME media type identifying a content item containing
-     * data formatted with iCalendar.
-     */
-    String ICALENDAR_MEDIA_TYPE = "text/calendar";
+	/**
+	 * The MIME media type identifying a content item containing data formatted with
+	 * iCalendar.
+	 */
+	String ICALENDAR_MEDIA_TYPE = "text/calendar";
 
-    String CARD_MEDIA_TYPE = "text/vcard";
+	String CARD_MEDIA_TYPE = "text/vcard";
 
-    String CARD_VERSION = "4.0";
+	String CARD_VERSION = "4.0";
 }

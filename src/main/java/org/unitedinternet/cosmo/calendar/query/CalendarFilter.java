@@ -25,73 +25,71 @@ import org.w3c.dom.Element;
 import java.text.ParseException;
 
 /**
- * Filter for querying calendar events. The structure of this filter is based on the structure of the <CALDAV:filter> element.
+ * Filter for querying calendar events. The structure of this filter is based on
+ * the structure of the <CALDAV:filter> element.
  * 
  * @author cdobrota See section 9.6 of the CalDAV spec
  */
 public class CalendarFilter implements CaldavConstants {
 
-    private ComponentFilter filter;
-    private Long parent;
+	private ComponentFilter filter;
+	private Long parent;
 
-    public CalendarFilter() {
-    }
+	public CalendarFilter() {
+	}
 
-    public CalendarFilter(Element element) throws ParseException {
-        this(element, null);
-    }
+	public CalendarFilter(Element element) throws ParseException {
+		this(element, null);
+	}
 
-    /**
-     * Construct a CalendarFilter object from a DOM Element.
-     * 
-     * @param element
-     *            The element.
-     * @param timezone
-     *            The timezone.
-     * @throws ParseException
-     *             - if something is wrong this exception is thrown.
-     */
-    public CalendarFilter(Element element, VTimeZone timezone) throws ParseException {
-        // Can only have a single comp-filter element
-        final ElementIterator i = DomUtils.getChildren(element, CarldavConstants.c(ELEMENT_CALDAV_COMP_FILTER));
-        if (!i.hasNext()) {
-            throw new ParseException("CALDAV:filter must contain a comp-filter", -1);
-        }
+	/**
+	 * Construct a CalendarFilter object from a DOM Element.
+	 * 
+	 * @param element  The element.
+	 * @param timezone The timezone.
+	 * @throws ParseException - if something is wrong this exception is thrown.
+	 */
+	public CalendarFilter(Element element, VTimeZone timezone) throws ParseException {
+		// Can only have a single comp-filter element
+		final ElementIterator i = DomUtils.getChildren(element, CarldavConstants.c(ELEMENT_CALDAV_COMP_FILTER));
+		if (!i.hasNext()) {
+			throw new ParseException("CALDAV:filter must contain a comp-filter", -1);
+		}
 
-        final Element child = i.nextElement();
+		final Element child = i.nextElement();
 
-        if (i.hasNext()) {
-            throw new ParseException("CALDAV:filter can contain only one comp-filter", -1);
-        }
+		if (i.hasNext()) {
+			throw new ParseException("CALDAV:filter can contain only one comp-filter", -1);
+		}
 
-        // Create new component filter and have it parse the element
-        filter = new ComponentFilter(child, timezone);
-    }
+		// Create new component filter and have it parse the element
+		filter = new ComponentFilter(child, timezone);
+	}
 
-    /**
-     * A CalendarFilter has exactly one ComponentFilter.
-     * 
-     * @return The component filter.
-     */
-    public ComponentFilter getFilter() {
-        return filter;
-    }
+	/**
+	 * A CalendarFilter has exactly one ComponentFilter.
+	 * 
+	 * @return The component filter.
+	 */
+	public ComponentFilter getFilter() {
+		return filter;
+	}
 
-    public void setFilter(ComponentFilter filter) {
-        this.filter = filter;
-    }
+	public void setFilter(ComponentFilter filter) {
+		this.filter = filter;
+	}
 
-    public Long getParent() {
-        return parent;
-    }
+	public Long getParent() {
+		return parent;
+	}
 
-    public void setParent(Long parent) {
-        this.parent = parent;
-    }
+	public void setParent(Long parent) {
+		this.parent = parent;
+	}
 
-    public void validate() {
-        if (filter != null) {
-            filter.validate();
-        }
-    }
+	public void validate() {
+		if (filter != null) {
+			filter.validate();
+		}
+	}
 }

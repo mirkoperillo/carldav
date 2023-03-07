@@ -22,15 +22,15 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that a precondition for a request does not exist.
  */
 public class PreconditionFailedException extends CosmoDavException {
-    
-    public PreconditionFailedException(String message) {
-        super(412, message);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "precondition-failed");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	public PreconditionFailedException(String message) {
+		super(412, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "precondition-failed");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

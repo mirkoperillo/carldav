@@ -16,25 +16,25 @@ import static carldav.CarldavConstants.caldav;
  */
 public class AddressbookHomeSet extends StandardDavProperty implements CaldavConstants {
 
-    public AddressbookHomeSet(DavResourceLocator locator, String userId) {
-        super(ADDRESSBOOK_HOME_SET, href(locator.getBaseHref() + "/" + ServerConstants.SVC_DAV, userId));
-    }
+	public AddressbookHomeSet(DavResourceLocator locator, String userId) {
+		super(ADDRESSBOOK_HOME_SET, href(locator.getBaseHref() + "/" + ServerConstants.SVC_DAV, userId));
+	}
 
-    public String getHref() {
-        return (String) getValue();
-    }
+	public String getHref() {
+		return (String) getValue();
+	}
 
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        Element e = DomUtils.createElement(document, XML_HREF, caldav(XML_HREF));
-        DomUtils.setText(e, getHref());
-        name.appendChild(e);
+		Element e = DomUtils.createElement(document, XML_HREF, caldav(XML_HREF));
+		DomUtils.setText(e, getHref());
+		name.appendChild(e);
 
-        return name;
-    }
+		return name;
+	}
 
-    private static String href(String baseHref, String userId) {
-        return CARD_HOME.bindAbsolute(baseHref, userId);
-    }
+	private static String href(String baseHref, String userId) {
+		return CARD_HOME.bindAbsolute(baseHref, userId);
+	}
 }

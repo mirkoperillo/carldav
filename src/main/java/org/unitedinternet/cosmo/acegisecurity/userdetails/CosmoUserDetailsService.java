@@ -30,22 +30,23 @@ import java.util.List;
 
 public class CosmoUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+	private final UserRepository userRepository;
 
-    public CosmoUserDetailsService(final UserRepository userRepository) {
-        Assert.notNull(userRepository, "userRepository is null");
-        this.userRepository = userRepository;
-    }
+	public CosmoUserDetailsService(final UserRepository userRepository) {
+		Assert.notNull(userRepository, "userRepository is null");
+		this.userRepository = userRepository;
+	}
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        carldav.entity.User user = userRepository.findByEmailIgnoreCase(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("user " + username + " not found");
-        }
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+		carldav.entity.User user = userRepository.findByEmailIgnoreCase(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("user " + username + " not found");
+		}
 
-        final boolean accountNonLocked = !user.isLocked();
-        final List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(StringUtils.defaultIfBlank(user.getRole(), "ROLE_USER"));
+		final boolean accountNonLocked = !user.isLocked();
+		final List<GrantedAuthority> authorities = AuthorityUtils
+				.createAuthorityList(StringUtils.defaultIfBlank(user.getRole(), "ROLE_USER"));
 
-        return new User(user.getEmail(), user.getPassword(), true, true, true, accountNonLocked, authorities);
-    }
+		return new User(user.getEmail(), user.getPassword(), true, true, true, accountNonLocked, authorities);
+	}
 }

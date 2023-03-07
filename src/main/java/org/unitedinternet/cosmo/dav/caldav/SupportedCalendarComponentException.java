@@ -24,16 +24,17 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-public class SupportedCalendarComponentException extends PreconditionFailedException implements ICalendarConstants, CaldavConstants {
+public class SupportedCalendarComponentException extends PreconditionFailedException
+		implements ICalendarConstants, CaldavConstants {
 
-    public SupportedCalendarComponentException(List<String> supportedComponents) {
-        super("Calendar object must contain at least one of " + StringUtils.join(supportedComponents, ", "));
-        getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
-    }
+	public SupportedCalendarComponentException(List<String> supportedComponents) {
+		super("Calendar object must contain at least one of " + StringUtils.join(supportedComponents, ", "));
+		getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
+	}
 
-    protected void writeContent(XMLStreamWriter writer) throws XMLStreamException {
-        writer.writeStartElement(NS_CALDAV, "supported-calendar-component");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	protected void writeContent(XMLStreamWriter writer) throws XMLStreamException {
+		writer.writeStartElement(NS_CALDAV, "supported-calendar-component");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

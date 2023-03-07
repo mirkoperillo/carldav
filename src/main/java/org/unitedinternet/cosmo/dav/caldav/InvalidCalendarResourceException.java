@@ -25,21 +25,22 @@ import org.unitedinternet.cosmo.dav.ForbiddenException;
  * restrictions specified in section 4.1 of RFC 4791.
  */
 public class InvalidCalendarResourceException
-    extends ForbiddenException implements CaldavConstants {
-    
-    /**
-     * Constructor.
-     * @param message The exception message.
-     */
-    public InvalidCalendarResourceException(String message) {
-        super(message);
-        getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
-    }
+		extends ForbiddenException implements CaldavConstants {
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_CALDAV, "valid-calendar-object-resource");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param message The exception message.
+	 */
+	public InvalidCalendarResourceException(String message) {
+		super(message);
+		getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_CALDAV, "valid-calendar-object-resource");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

@@ -27,15 +27,15 @@ import java.nio.charset.Charset;
  */
 public class ContentType extends StandardDavProperty {
 
-    public ContentType(String type, String encoding) {
-        super(GET_CONTENT_TYPE, mt(type, encoding));
-    }
+	public ContentType(String type, String encoding) {
+		super(GET_CONTENT_TYPE, mt(type, encoding));
+	}
 
-    private static String mt(String type, String encoding) {
-        final MediaType mediaType = MediaType.parseMediaType(type);
-        if(StringUtils.hasText(encoding)) {
-            return new MediaType(mediaType.getType(), mediaType.getSubtype(), Charset.forName(encoding)).toString();
-        }
-        return mediaType.toString();
-    }
+	private static String mt(String type, String encoding) {
+		final MediaType mediaType = MediaType.parseMediaType(type);
+		if (StringUtils.hasText(encoding)) {
+			return new MediaType(mediaType.getType(), mediaType.getSubtype(), Charset.forName(encoding)).toString();
+		}
+		return mediaType.toString();
+	}
 }

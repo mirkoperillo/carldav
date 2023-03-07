@@ -13,21 +13,22 @@ import org.unitedinternet.cosmo.dav.servlet.ExceptionMapper;
 @Component
 public class ExceptionResolverHandler {
 
-  public CosmoDavException resolve(final Exception exception) {
-    if (exception instanceof DbActionExecutionException && exception.getCause() instanceof DuplicateKeyException) {
-      var cve = (DuplicateKeyException) exception.getCause();
-      var message = cve.getCause().getMessage();
-      if (message.contains("UID_COLLECTION")) {
-        return new UidConflictException(message);
-      }
-      return new ConflictException(message);
-    }
-    if (exception instanceof DbActionExecutionException && exception.getCause() instanceof DataIntegrityViolationException) {
-      var cve = (DataIntegrityViolationException) exception.getCause();
-      var message = cve.getCause().getMessage();
-      return new BadRequestException(message);
-    }
+	public CosmoDavException resolve(final Exception exception) {
+		if (exception instanceof DbActionExecutionException && exception.getCause() instanceof DuplicateKeyException) {
+			var cve = (DuplicateKeyException) exception.getCause();
+			var message = cve.getCause().getMessage();
+			if (message.contains("UID_COLLECTION")) {
+				return new UidConflictException(message);
+			}
+			return new ConflictException(message);
+		}
+		if (exception instanceof DbActionExecutionException
+				&& exception.getCause() instanceof DataIntegrityViolationException) {
+			var cve = (DataIntegrityViolationException) exception.getCause();
+			var message = cve.getCause().getMessage();
+			return new BadRequestException(message);
+		}
 
-    return ExceptionMapper.map(exception);
-  }
+		return ExceptionMapper.map(exception);
+	}
 }

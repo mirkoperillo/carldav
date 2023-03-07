@@ -29,68 +29,69 @@ import static org.springframework.http.HttpHeaders.LAST_MODIFIED;
 
 public class DavCalendarResource extends DavItemResourceBase implements ICalendarConstants {
 
-  public DavCalendarResource(Item item, DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
-    super(item, locator, factory);
+	public DavCalendarResource(Item item, DavResourceLocator locator, DavResourceFactory factory)
+			throws CosmoDavException {
+		super(item, locator, factory);
 
-    registerLiveProperty(GET_CONTENT_LENGTH);
-    registerLiveProperty(GET_CONTENT_TYPE);
+		registerLiveProperty(GET_CONTENT_LENGTH);
+		registerLiveProperty(GET_CONTENT_TYPE);
 
-    reportTypes.add(MultigetReport.REPORT_TYPE_CALDAV_MULTIGET);
-    reportTypes.add(QueryReport.REPORT_TYPE_CALDAV_QUERY);
-  }
+		reportTypes.add(MultigetReport.REPORT_TYPE_CALDAV_MULTIGET);
+		reportTypes.add(QueryReport.REPORT_TYPE_CALDAV_QUERY);
+	}
 
-  @Override
-  protected void populateItem(DavInputContext inputContext) throws CosmoDavException {
-    super.populateItem(inputContext);
+	@Override
+	protected void populateItem(DavInputContext inputContext) throws CosmoDavException {
+		super.populateItem(inputContext);
 
-    setCalendar(inputContext.getCalendarString());
-  }
+		setCalendar(inputContext.getCalendarString());
+	}
 
-  public boolean matches(CalendarFilter filter) throws CosmoDavException {
-    return getCalendarQueryProcesor().filterQuery(getItem(), filter);
-  }
+	public boolean matches(CalendarFilter filter) throws CosmoDavException {
+		return getCalendarQueryProcesor().filterQuery(getItem(), filter);
+	}
 
-  public String getCalendar() {
-    return getItem().getCalendar();
-  }
+	public String getCalendar() {
+		return getItem().getCalendar();
+	}
 
-  public void setCalendar(String calendar) throws CosmoDavException {
-    var item = getItem();
-    item.setCalendar(calendar);
-  }
+	public void setCalendar(String calendar) throws CosmoDavException {
+		var item = getItem();
+		item.setCalendar(calendar);
+	}
 
-  public void writeHead(final HttpServletResponse response) {
-    response.setContentType(TEXT_CALENDAR_VALUE);
+	public void writeHead(final HttpServletResponse response) {
+		response.setContentType(TEXT_CALENDAR_VALUE);
 
-    var calendar = getCalendar();
-    var calendarBytes = calendar.getBytes(StandardCharsets.UTF_8);
+		var calendar = getCalendar();
+		var calendarBytes = calendar.getBytes(StandardCharsets.UTF_8);
 
-    response.setContentLength(calendarBytes.length);
-    if (getModificationTime() >= 0) {
-      response.addDateHeader(LAST_MODIFIED, getModificationTime());
-    }
-    if (getETag() != null) {
-      response.setHeader(ETAG, getETag());
-    }
-  }
+		response.setContentLength(calendarBytes.length);
+		if (getModificationTime() >= 0) {
+			response.addDateHeader(LAST_MODIFIED, getModificationTime());
+		}
+		if (getETag() != null) {
+			response.setHeader(ETAG, getETag());
+		}
+	}
 
-  public void writeBody(final HttpServletResponse response) throws IOException {
-    var calendar = getCalendar();
-    var calendarBytes = calendar.getBytes(StandardCharsets.UTF_8);
+	public void writeBody(final HttpServletResponse response) throws IOException {
+		var calendar = getCalendar();
+		var calendarBytes = calendar.getBytes(StandardCharsets.UTF_8);
 
-    var bois = new ByteArrayInputStream(calendarBytes);
-    IOUtils.copy(bois, response.getOutputStream());
-  }
+		var bois = new ByteArrayInputStream(calendarBytes);
+		IOUtils.copy(bois, response.getOutputStream());
+	}
 
-  public Set<ReportType> getReportTypes() {
-    return reportTypes;
-  }
+	public Set<ReportType> getReportTypes() {
+		return reportTypes;
+	}
 
-  protected void loadLiveProperties(DavPropertySet properties) {
-    super.loadLiveProperties(properties);
-    var calendarBytes = getCalendar().getBytes(StandardCharsets.UTF_8);
+	protected void loadLiveProperties(DavPropertySet properties) {
+		super.loadLiveProperties(properties);
+		var calendarBytes = getCalendar().getBytes(StandardCharsets.UTF_8);
 
-    properties.add(new ContentLength((long) calendarBytes.length));
-    properties.add(new ContentType(ICALENDAR_MEDIA_TYPE, "UTF-8"));
-  }
+		properties.add(new ContentLength((long) calendarBytes.length));
+		properties.add(new ContentType(ICALENDAR_MEDIA_TYPE, "UTF-8"));
+	}
 }

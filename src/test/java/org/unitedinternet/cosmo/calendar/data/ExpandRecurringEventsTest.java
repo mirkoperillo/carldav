@@ -21,173 +21,173 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExpandRecurringEventsTest {
 
-    private static final String BASE_DIR = "src/test/resources/testdata/";
+	private static final String BASE_DIR = "src/test/resources/testdata/";
 
-    @Test
-    void testExpandEvent() throws Exception {
-        try (var fis = new FileInputStream(BASE_DIR + "expand_recurr_test1.ics")) {
-            var cb = new CalendarBuilder();
-            var calendar = cb.build(fis);
+	@Test
+	void testExpandEvent() throws Exception {
+		try (var fis = new FileInputStream(BASE_DIR + "expand_recurr_test1.ics")) {
+			var cb = new CalendarBuilder();
+			var calendar = cb.build(fis);
 
-            assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
+			assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
 
-            var vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
-            var tz = new TimeZone(vtz);
-            var filter = new OutputFilter("test");
-            var start = new DateTime("20060102T140000", tz);
-            var end = new DateTime("20060105T140000", tz);
-            var period = new Period(start, end);
-            var buffer = new StringBuffer();
+			var vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
+			var tz = new TimeZone(vtz);
+			var filter = new OutputFilter("test");
+			var start = new DateTime("20060102T140000", tz);
+			var end = new DateTime("20060105T140000", tz);
+			var period = new Period(start, end);
+			var buffer = new StringBuffer();
 
-            start.setUtc(true);
-            end.setUtc(true);
+			start.setUtc(true);
+			end.setUtc(true);
 
-            filter.setExpand(period);
-            filter.setAllSubComponents();
-            filter.setAllProperties();
-            filter.filter(calendar, buffer);
+			filter.setExpand(period);
+			filter.setAllSubComponents();
+			filter.setAllProperties();
+			filter.filter(calendar, buffer);
 
-            var sr = new StringReader(buffer.toString());
-            var filterCal = cb.build(sr);
-            var comps = filterCal.getComponents().getComponents("VEVENT");
+			var sr = new StringReader(buffer.toString());
+			var filterCal = cb.build(sr);
+			var comps = filterCal.getComponents().getComponents("VEVENT");
 
-            // Should expand to 3 event components
-            assertEquals(3, comps.size());
+			// Should expand to 3 event components
+			assertEquals(3, comps.size());
 
-            Iterator<VEvent> it = comps.iterator();
-            var event = it.next();
+			Iterator<VEvent> it = comps.iterator();
+			var event = it.next();
 
-            assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
-            assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
+			assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
+			assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
 
-            event = it.next();
-            assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
-            assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
+			event = it.next();
+			assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
+			assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
 
-            event = it.next();
-            assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060104T190000Z", event.getStartDate().getDate().toString());
-            assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
+			event = it.next();
+			assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060104T190000Z", event.getStartDate().getDate().toString());
+			assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
 
-            verifyExpandedCalendar(filterCal);
-        }
+			verifyExpandedCalendar(filterCal);
+		}
 
-    }
+	}
 
-    @Test
-    void testExpandEventWithOverrides() throws Exception {
-        try (var fis = new FileInputStream(BASE_DIR + "expand_recurr_test2.ics")) {
-            var cb = new CalendarBuilder();
-            var calendar = cb.build(fis);
-            var comps = calendar.getComponents().getComponents("VEVENT");
+	@Test
+	void testExpandEventWithOverrides() throws Exception {
+		try (var fis = new FileInputStream(BASE_DIR + "expand_recurr_test2.ics")) {
+			var cb = new CalendarBuilder();
+			var calendar = cb.build(fis);
+			var comps = calendar.getComponents().getComponents("VEVENT");
 
-            assertEquals(5, comps.size());
+			assertEquals(5, comps.size());
 
-            var vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
-            var tz = new TimeZone(vtz);
-            var filter = new OutputFilter("test");
-            var start = new DateTime("20060102T140000", tz);
-            var end = new DateTime("20060105T140000", tz);
-            var period = new Period(start, end);
-            var buffer = new StringBuffer();
+			var vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
+			var tz = new TimeZone(vtz);
+			var filter = new OutputFilter("test");
+			var start = new DateTime("20060102T140000", tz);
+			var end = new DateTime("20060105T140000", tz);
+			var period = new Period(start, end);
+			var buffer = new StringBuffer();
 
-            start.setUtc(true);
-            end.setUtc(true);
+			start.setUtc(true);
+			end.setUtc(true);
 
-            filter.setExpand(period);
-            filter.setAllSubComponents();
-            filter.setAllProperties();
-            filter.filter(calendar, buffer);
+			filter.setExpand(period);
+			filter.setAllSubComponents();
+			filter.setAllProperties();
+			filter.filter(calendar, buffer);
 
-            var sr = new StringReader(buffer.toString());
-            var filterCal = cb.build(sr);
+			var sr = new StringReader(buffer.toString());
+			var filterCal = cb.build(sr);
 
-            comps = filterCal.getComponents().getComponents("VEVENT");
+			comps = filterCal.getComponents().getComponents("VEVENT");
 
-            // Should expand to 3 event components
-            assertEquals(3, comps.size());
+			// Should expand to 3 event components
+			assertEquals(3, comps.size());
 
-            Iterator<VEvent> it = comps.iterator();
-            var event = it.next();
+			Iterator<VEvent> it = comps.iterator();
+			var event = it.next();
 
-            assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
-            assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
+			assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
+			assertEquals("20060102T190000Z", event.getRecurrenceId().getDate().toString());
 
-            event = it.next();
-            assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
-            assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
+			event = it.next();
+			assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060103T190000Z", event.getStartDate().getDate().toString());
+			assertEquals("20060103T190000Z", event.getRecurrenceId().getDate().toString());
 
-            event = it.next();
-            assertEquals("event 6 changed", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060104T210000Z", event.getStartDate().getDate().toString());
-            assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
+			event = it.next();
+			assertEquals("event 6 changed", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060104T210000Z", event.getStartDate().getDate().toString());
+			assertEquals("20060104T190000Z", event.getRecurrenceId().getDate().toString());
 
-            verifyExpandedCalendar(filterCal);
-        }
-    }
+			verifyExpandedCalendar(filterCal);
+		}
+	}
 
-    @Test
-    void removedTestExpandNonRecurringEvent() throws Exception {
-        try (var fis = new FileInputStream(BASE_DIR + "expand_nonrecurr_test3.ics")) {
-            var cb = new CalendarBuilder();
-            var calendar = cb.build(fis);
+	@Test
+	void removedTestExpandNonRecurringEvent() throws Exception {
+		try (var fis = new FileInputStream(BASE_DIR + "expand_nonrecurr_test3.ics")) {
+			var cb = new CalendarBuilder();
+			var calendar = cb.build(fis);
 
-            assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
+			assertEquals(1, calendar.getComponents().getComponents("VEVENT").size());
 
-            var vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
-            var tz = new TimeZone(vtz);
-            var filter = new OutputFilter("test");
-            var start = new DateTime("20060102T140000", tz);
-            var end = new DateTime("20060105T140000", tz);
-            var period = new Period(start, end);
-            var buffer = new StringBuffer();
+			var vtz = (VTimeZone) calendar.getComponents().getComponent("VTIMEZONE");
+			var tz = new TimeZone(vtz);
+			var filter = new OutputFilter("test");
+			var start = new DateTime("20060102T140000", tz);
+			var end = new DateTime("20060105T140000", tz);
+			var period = new Period(start, end);
+			var buffer = new StringBuffer();
 
-            start.setUtc(true);
-            end.setUtc(true);
+			start.setUtc(true);
+			end.setUtc(true);
 
-            filter.setExpand(period);
-            filter.setAllSubComponents();
-            filter.setAllProperties();
-            filter.filter(calendar, buffer);
+			filter.setExpand(period);
+			filter.setAllSubComponents();
+			filter.setAllProperties();
+			filter.filter(calendar, buffer);
 
-            var sr = new StringReader(buffer.toString());
-            var filterCal = cb.build(sr);
+			var sr = new StringReader(buffer.toString());
+			var filterCal = cb.build(sr);
 
-            var comps = filterCal.getComponents().getComponents("VEVENT");
+			var comps = filterCal.getComponents().getComponents("VEVENT");
 
-            // Should be the same component
-            assertEquals(1, comps.size());
+			// Should be the same component
+			assertEquals(1, comps.size());
 
-            Iterator<VEvent> it = comps.iterator();
-            var event = it.next();
+			Iterator<VEvent> it = comps.iterator();
+			var event = it.next();
 
-            assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
-            assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
-            assertNull(event.getRecurrenceId());
+			assertEquals("event 6", event.getProperties().getProperty(Property.SUMMARY).getValue());
+			assertEquals("20060102T190000Z", event.getStartDate().getDate().toString());
+			assertNull(event.getRecurrenceId());
 
-            verifyExpandedCalendar(filterCal);
-        }
-    }
+			verifyExpandedCalendar(filterCal);
+		}
+	}
 
-    private void verifyExpandedCalendar(Calendar calendar) {
-        // timezone should be stripped
-        assertNull(calendar.getComponents().getComponent("VTIMEZONE"));
+	private void verifyExpandedCalendar(Calendar calendar) {
+		// timezone should be stripped
+		assertNull(calendar.getComponents().getComponent("VTIMEZONE"));
 
-        var comps = calendar.getComponents().getComponents("VEVENT");
+		var comps = calendar.getComponents().getComponents("VEVENT");
 
-        for (var event : (Iterable<VEvent>) comps) {
-            var dt = (DateTime) event.getStartDate().getDate();
+		for (var event : (Iterable<VEvent>) comps) {
+			var dt = (DateTime) event.getStartDate().getDate();
 
-            // verify start dates are UTC
-            assertNull(event.getStartDate().getParameters().getParameter(Parameter.TZID));
-            assertTrue(dt.isUtc());
+			// verify start dates are UTC
+			assertNull(event.getStartDate().getParameters().getParameter(Parameter.TZID));
+			assertTrue(dt.isUtc());
 
-            // verify no recurrence rules
-            assertNull(event.getProperties().getProperty(Property.RRULE));
-        }
-    }
+			// verify no recurrence rules
+			assertNull(event.getProperties().getProperty(Property.RRULE));
+		}
+	}
 }

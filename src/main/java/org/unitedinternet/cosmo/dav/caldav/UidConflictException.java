@@ -26,19 +26,19 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class UidConflictException extends ConflictException implements CaldavConstants {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public UidConflictException(String message) {
-        super(message);
-        getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
-        getNamespaceContext().addNamespace(PRE_COSMO, NS_COSMO);
-    }
+	public UidConflictException(String message) {
+		super(message);
+		getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
+		getNamespaceContext().addNamespace(PRE_COSMO, NS_COSMO);
+	}
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_CALDAV, "no-uid-conflict");
-        writer.writeStartElement(NS_COSMO, "existing-uuid");
-        writer.writeEndElement();
-        writer.writeEndElement();
-    }
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_CALDAV, "no-uid-conflict");
+		writer.writeStartElement(NS_COSMO, "existing-uuid");
+		writer.writeEndElement();
+		writer.writeEndElement();
+	}
 }

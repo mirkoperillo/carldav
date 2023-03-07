@@ -29,31 +29,31 @@ import java.util.TreeSet;
 
 public class SupportedReportSet extends StandardDavProperty {
 
-    public SupportedReportSet(Set<ReportType> reports) {
-        super(SUPPORTED_REPORT_SET, reports);
-    }
+	public SupportedReportSet(Set<ReportType> reports) {
+		super(SUPPORTED_REPORT_SET, reports);
+	}
 
-    public Set<ReportType> getReportTypes() {
-        return (Set<ReportType>) getValue();
-    }
+	public Set<ReportType> getReportTypes() {
+		return (Set<ReportType>) getValue();
+	}
 
-    public String getValueText() {
-        TreeSet<String> types = new TreeSet<>();
-        for (ReportType rt : getReportTypes()) {
-            types.add(rt.getReportName());
-        }
-        return StringUtils.join(types, ", ");
-    }
+	public String getValueText() {
+		TreeSet<String> types = new TreeSet<>();
+		for (ReportType rt : getReportTypes()) {
+			types.add(rt.getReportName());
+		}
+		return StringUtils.join(types, ", ");
+	}
 
-    public Element toXml(Document document) {
-        Element element = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element element = getName().toXml(document);
 
-        for (ReportType rt : getReportTypes()) {
-            Element sr = DomUtils.addChildElement(element, caldav("supported-report"));
-            Element r = DomUtils.addChildElement(sr, caldav("report"));
-            r.appendChild(rt.toXml(document));
-        }
+		for (ReportType rt : getReportTypes()) {
+			Element sr = DomUtils.addChildElement(element, caldav("supported-report"));
+			Element r = DomUtils.addChildElement(sr, caldav("report"));
+			r.appendChild(rt.toXml(document));
+		}
 
-        return element;
-    }
+		return element;
+	}
 }

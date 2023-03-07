@@ -24,70 +24,71 @@ import static carldav.CarldavConstants.*;
 
 public class DavCalendarCollection extends DavCollectionBase implements CaldavConstants, ICalendarConstants {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DavCalendarCollection.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DavCalendarCollection.class);
 
-    public DavCalendarCollection(CollectionItem collection, DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
-        super(collection, locator, factory);
+	public DavCalendarCollection(CollectionItem collection, DavResourceLocator locator, DavResourceFactory factory)
+			throws CosmoDavException {
+		super(collection, locator, factory);
 
-        registerLiveProperty(SUPPORTED_CALENDAR_COMPONENT_SET);
-        registerLiveProperty(SUPPORTED_CALENDAR_DATA);
-        registerLiveProperty(GET_CTAG);
-        registerLiveProperty(CURRENT_USER_PRINCIPAL);
-        registerLiveProperty(CALENDAR_COLOR);
+		registerLiveProperty(SUPPORTED_CALENDAR_COMPONENT_SET);
+		registerLiveProperty(SUPPORTED_CALENDAR_DATA);
+		registerLiveProperty(GET_CTAG);
+		registerLiveProperty(CURRENT_USER_PRINCIPAL);
+		registerLiveProperty(CALENDAR_COLOR);
 
-        reportTypes.add(MultigetReport.REPORT_TYPE_CALDAV_MULTIGET);
-        reportTypes.add(QueryReport.REPORT_TYPE_CALDAV_QUERY);
-    }
+		reportTypes.add(MultigetReport.REPORT_TYPE_CALDAV_MULTIGET);
+		reportTypes.add(QueryReport.REPORT_TYPE_CALDAV_QUERY);
+	}
 
-    public String getSupportedMethods() {
-        return "OPTIONS, GET, HEAD, TRACE, PROPFIND, PUT, DELETE, REPORT";
-    }
+	public String getSupportedMethods() {
+		return "OPTIONS, GET, HEAD, TRACE, PROPFIND, PUT, DELETE, REPORT";
+	}
 
-    public Set<DavCalendarResource> findMembers(CalendarFilter filter) throws CosmoDavException {
-        Set<DavCalendarResource> members = new HashSet<>();
+	public Set<DavCalendarResource> findMembers(CalendarFilter filter) throws CosmoDavException {
+		Set<DavCalendarResource> members = new HashSet<>();
 
-        CollectionItem collection = getItem();
-        filter.setParent(collection.getId());
+		CollectionItem collection = getItem();
+		filter.setParent(collection.getId());
 
-        for (Item memberItem : getCalendarQueryProcesor().filterQuery(filter)) {
-            WebDavResource resource = memberToResource(memberItem);
-            members.add((DavCalendarResource) resource);
-        }
+		for (Item memberItem : getCalendarQueryProcesor().filterQuery(filter)) {
+			WebDavResource resource = memberToResource(memberItem);
+			members.add((DavCalendarResource) resource);
+		}
 
-        return members;
-    }
+		return members;
+	}
 
-    protected Set<QName> getResourceTypes() {
-        Set<QName> rt = super.getResourceTypes();
-        rt.add(RESOURCE_TYPE_CALENDAR);
-        return rt;
-    }
+	protected Set<QName> getResourceTypes() {
+		Set<QName> rt = super.getResourceTypes();
+		rt.add(RESOURCE_TYPE_CALENDAR);
+		return rt;
+	}
 
-    protected void loadLiveProperties(DavPropertySet properties) {
-        super.loadLiveProperties(properties);
+	protected void loadLiveProperties(DavPropertySet properties) {
+		super.loadLiveProperties(properties);
 
-        properties.add(new GetCTag(ETagUtil.createETag(getItem().getId(), getItem().getModifiedDate())));
-        properties.add(new SupportedCalendarComponentSet());
-        properties.add(new SupportedCollationSet());
-        properties.add(new SupportedCalendarData());
-        properties.add(new AddressbookHomeSet(getResourceLocator(), getUsername()));
-        properties.add(new DisplayName(getItem().getDisplayName()));
-        properties.add(new CurrentUserPrincipal(getResourceLocator(), getUsername()));
-        properties.add(new CalendarColor(getItem().getColor()));
-    }
+		properties.add(new GetCTag(ETagUtil.createETag(getItem().getId(), getItem().getModifiedDate())));
+		properties.add(new SupportedCalendarComponentSet());
+		properties.add(new SupportedCollationSet());
+		properties.add(new SupportedCalendarData());
+		properties.add(new AddressbookHomeSet(getResourceLocator(), getUsername()));
+		properties.add(new DisplayName(getItem().getDisplayName()));
+		properties.add(new CurrentUserPrincipal(getResourceLocator(), getUsername()));
+		properties.add(new CalendarColor(getItem().getColor()));
+	}
 
-    protected void saveContent(DavItemResourceBase member) throws CosmoDavException {
-        Item content = member.getItem();
-        final Item converted = converter.convert(content);
+	protected void saveContent(DavItemResourceBase member) throws CosmoDavException {
+		Item content = member.getItem();
+		final Item converted = converter.convert(content);
 
-        if (content.getId() != null) {
-            LOG.debug("updating {} {} ", content.getMimetype(), member.getResourcePath());
-            getContentService().updateContent(converted);
-        } else {
-            LOG.debug("creating {} {}", content.getMimetype(), member.getResourcePath());
-            getContentService().createContent(getItem(), converted);
-        }
+		if (content.getId() != null) {
+			LOG.debug("updating {} {} ", content.getMimetype(), member.getResourcePath());
+			getContentService().updateContent(converted);
+		} else {
+			LOG.debug("creating {} {}", content.getMimetype(), member.getResourcePath());
+			getContentService().createContent(getItem(), converted);
+		}
 
-        member.setItem(content);
-    }
+		member.setItem(content);
+	}
 }

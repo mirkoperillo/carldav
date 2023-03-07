@@ -26,20 +26,21 @@ import javax.xml.stream.XMLStreamWriter;
  * correctly constructed.
  */
 public class InvalidFilterException extends BadRequestException implements CaldavConstants {
-    
-    /**
-     * Constructor.
-     * @param e The exception indicating that the data is not correctly constructed.
-     */
-    public InvalidFilterException(Exception e) {
-        super(e.getMessage());
-        getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_CALDAV, "valid-filter");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param e The exception indicating that the data is not correctly constructed.
+	 */
+	public InvalidFilterException(Exception e) {
+		super(e.getMessage());
+		getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_CALDAV, "valid-filter");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

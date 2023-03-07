@@ -34,158 +34,167 @@ import java.util.List;
  */
 public class ComponentFilter implements CaldavConstants, ICalendarConstants {
 
-    private static final Log LOG = LogFactory.getLog(ComponentFilter.class);
+	private static final Log LOG = LogFactory.getLog(ComponentFilter.class);
 
-    private final List<ComponentFilter> componentFilters = new ArrayList<>();
-    private final List<PropertyFilter> propFilters = new ArrayList<>();
-    private IsNotDefinedFilter isNotDefinedFilter;
-    private TimeRangeFilter timeRangeFilter;
-    private String name;
+	private final List<ComponentFilter> componentFilters = new ArrayList<>();
+	private final List<PropertyFilter> propFilters = new ArrayList<>();
+	private IsNotDefinedFilter isNotDefinedFilter;
+	private TimeRangeFilter timeRangeFilter;
+	private String name;
 
-    private interface InitializationOperation {
-        void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount) throws ParseException;
-    }
+	private interface InitializationOperation {
+		void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount)
+				throws ParseException;
+	}
 
-    private enum Initializers implements InitializationOperation {
-        TIME_RANGE(ELEMENT_CALDAV_TIME_RANGE) {
-            @Override
-            public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount) throws ParseException {
-             // Can only have one time-range element in a comp-filter
-                if (componentFilter.timeRangeFilter != null) {
-                    throw new ParseException("CALDAV:comp-filter only one time-range element permitted", -1);
-                }
+	private enum Initializers implements InitializationOperation {
+		TIME_RANGE(ELEMENT_CALDAV_TIME_RANGE) {
+			@Override
+			public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount)
+					throws ParseException {
+				// Can only have one time-range element in a comp-filter
+				if (componentFilter.timeRangeFilter != null) {
+					throw new ParseException("CALDAV:comp-filter only one time-range element permitted", -1);
+				}
 
-                componentFilter.timeRangeFilter = new TimeRangeFilter(element, timezone);
-            }
-        },
+				componentFilter.timeRangeFilter = new TimeRangeFilter(element, timezone);
+			}
+		},
 
-        COMP_FILTER(ELEMENT_CALDAV_COMP_FILTER) {
-            @Override
-            public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount) throws ParseException {
-                componentFilter.componentFilters.add(new ComponentFilter(element, timezone));
-            }
-        },
-        PROP_FILTER(ELEMENT_CALDAV_PROP_FILTER) {
-            @Override
-            public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount) throws ParseException {
-                componentFilter.propFilters.add(new PropertyFilter(element, timezone));
-            }
-        },
-        NOT_DEFINED_FILTER(ELEMENT_CALDAV_IS_NOT_DEFINED) {
-            @Override
-            public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount) throws ParseException {
-                if (childCount > 1) {
-                    throw new ParseException("CALDAV:is-not-defined cannnot be present with other child elements", -1);
-                }
-                componentFilter.isNotDefinedFilter = new IsNotDefinedFilter();
-            }
-        },
-        DEFINED_FILTER(ELEMENT_CALDAV_IS_DEFINED) {
-            @Override
-            public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount) throws ParseException {
-                // XXX provided for backwards compatibility with Evolution 2.6, which does not implement is-not-defined
-                if (childCount > 1) {
-                    throw new ParseException("CALDAV:is-defined cannnot be present with other child elements", -1);
-                }
-                LOG.warn("old style 'is-defined' ignored from (outdated) client!");
-            }
+		COMP_FILTER(ELEMENT_CALDAV_COMP_FILTER) {
+			@Override
+			public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount)
+					throws ParseException {
+				componentFilter.componentFilters.add(new ComponentFilter(element, timezone));
+			}
+		},
+		PROP_FILTER(ELEMENT_CALDAV_PROP_FILTER) {
+			@Override
+			public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount)
+					throws ParseException {
+				componentFilter.propFilters.add(new PropertyFilter(element, timezone));
+			}
+		},
+		NOT_DEFINED_FILTER(ELEMENT_CALDAV_IS_NOT_DEFINED) {
+			@Override
+			public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount)
+					throws ParseException {
+				if (childCount > 1) {
+					throw new ParseException("CALDAV:is-not-defined cannnot be present with other child elements", -1);
+				}
+				componentFilter.isNotDefinedFilter = new IsNotDefinedFilter();
+			}
+		},
+		DEFINED_FILTER(ELEMENT_CALDAV_IS_DEFINED) {
+			@Override
+			public void initialize(Element element, VTimeZone timezone, ComponentFilter componentFilter, int childCount)
+					throws ParseException {
+				// XXX provided for backwards compatibility with Evolution 2.6, which does not
+				// implement is-not-defined
+				if (childCount > 1) {
+					throw new ParseException("CALDAV:is-defined cannnot be present with other child elements", -1);
+				}
+				LOG.warn("old style 'is-defined' ignored from (outdated) client!");
+			}
 
-        };
+		};
 
-        private final String name;
+		private final String name;
 
-        String getName() {
-            return name;
-        }
+		String getName() {
+			return name;
+		}
 
-        Initializers(String name) {
-            this.name = name;
-        }
+		Initializers(String name) {
+			this.name = name;
+		}
 
-        static InitializationOperation getInitializer(String elementLocalName) throws ParseException {
-            for (var initializer : values()) {
-                if (initializer.getName().equals(elementLocalName)) {
-                    return initializer;
-                }
-            }
-            throw new ParseException("CALDAV:comp-filter an invalid element name found", -1);
-        }
-    }
+		static InitializationOperation getInitializer(String elementLocalName) throws ParseException {
+			for (var initializer : values()) {
+				if (initializer.getName().equals(elementLocalName)) {
+					return initializer;
+				}
+			}
+			throw new ParseException("CALDAV:comp-filter an invalid element name found", -1);
+		}
+	}
 
-    public ComponentFilter(Element element, VTimeZone timezone) throws ParseException {
-        // Name must be present
-        validateName(element);
+	public ComponentFilter(Element element, VTimeZone timezone) throws ParseException {
+		// Name must be present
+		validateName(element);
 
-        var i = DomUtils.getChildren(element);
-        int childCount = 0;
+		var i = DomUtils.getChildren(element);
+		int childCount = 0;
 
-        while (i.hasNext()) {
-            var child = i.nextElement();
-            childCount++;
+		while (i.hasNext()) {
+			var child = i.nextElement();
+			childCount++;
 
-            // if is-not-defined is present, then nothing else can be present
-            validateNotDefinedState(childCount);
+			// if is-not-defined is present, then nothing else can be present
+			validateNotDefinedState(childCount);
 
-            Initializers.getInitializer(child.getLocalName()).initialize(child, timezone, this, childCount);
-        }
-    }
+			Initializers.getInitializer(child.getLocalName()).initialize(child, timezone, this, childCount);
+		}
+	}
 
-    private void validateName(Element element) throws ParseException {
-        name = DomUtils.getAttribute(element, ATTR_CALDAV_NAME);
+	private void validateName(Element element) throws ParseException {
+		name = DomUtils.getAttribute(element, ATTR_CALDAV_NAME);
 
-        if (name == null) {
-            throw new ParseException("CALDAV:comp-filter a calendar component name  (e.g., \"VEVENT\") is required", -1);
-        }
+		if (name == null) {
+			throw new ParseException("CALDAV:comp-filter a calendar component name  (e.g., \"VEVENT\") is required",
+					-1);
+		}
 
-        if (!(name.equals(Calendar.VCALENDAR) || CalendarUtils.isSupportedComponent(name) || name.equals(Component.VALARM) || name.equals(Component.VTIMEZONE))) {
-            throw new ParseException(name + " is not a supported iCalendar component", -1);
-        }
-    }
+		if (!(name.equals(Calendar.VCALENDAR) || CalendarUtils.isSupportedComponent(name)
+				|| name.equals(Component.VALARM) || name.equals(Component.VTIMEZONE))) {
+			throw new ParseException(name + " is not a supported iCalendar component", -1);
+		}
+	}
 
-    private void validateNotDefinedState(int childCount) throws ParseException {
-        if (childCount > 1 && isNotDefinedFilter != null) {
-            throw new ParseException("CALDAV:is-not-defined cannnot be present with other child elements", -1);
-        }
-    }
+	private void validateNotDefinedState(int childCount) throws ParseException {
+		if (childCount > 1 && isNotDefinedFilter != null) {
+			throw new ParseException("CALDAV:is-not-defined cannnot be present with other child elements", -1);
+		}
+	}
 
-    public ComponentFilter(String name) {
-        this.name = name;
-    }
+	public ComponentFilter(String name) {
+		this.name = name;
+	}
 
-    public IsNotDefinedFilter getIsNotDefinedFilter() {
-        return isNotDefinedFilter;
-    }
+	public IsNotDefinedFilter getIsNotDefinedFilter() {
+		return isNotDefinedFilter;
+	}
 
-    public void setIsNotDefinedFilter(IsNotDefinedFilter isNotDefinedFilter) {
-        this.isNotDefinedFilter = isNotDefinedFilter;
-    }
+	public void setIsNotDefinedFilter(IsNotDefinedFilter isNotDefinedFilter) {
+		this.isNotDefinedFilter = isNotDefinedFilter;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public List<ComponentFilter> getComponentFilters() {
-        return componentFilters;
-    }
+	public List<ComponentFilter> getComponentFilters() {
+		return componentFilters;
+	}
 
-    public TimeRangeFilter getTimeRangeFilter() {
-        return timeRangeFilter;
-    }
+	public TimeRangeFilter getTimeRangeFilter() {
+		return timeRangeFilter;
+	}
 
-    public void setTimeRangeFilter(TimeRangeFilter timeRangeFilter) {
-        this.timeRangeFilter = timeRangeFilter;
-    }
+	public void setTimeRangeFilter(TimeRangeFilter timeRangeFilter) {
+		this.timeRangeFilter = timeRangeFilter;
+	}
 
-    public List<PropertyFilter> getPropFilters() {
-        return propFilters;
-    }
+	public List<PropertyFilter> getPropFilters() {
+		return propFilters;
+	}
 
-    public void validate() {
-        for (var componentFilter : componentFilters) {
-            componentFilter.validate();
-        }
-        for (var propFilter : propFilters) {
-            propFilter.validate();
-        }
-    }
+	public void validate() {
+		for (var componentFilter : componentFilters) {
+			componentFilter.validate();
+		}
+		for (var propFilter : propFilters) {
+			propFilter.validate();
+		}
+	}
 }

@@ -33,75 +33,73 @@ import java.io.StringReader;
  */
 public class TimeZoneExtractor {
 
-    /**
-     * Creates an instance of <code>VTimeZone</code> from an
-     * iCalendar string.
-     *
-     * The iCalendar string must include an enclosing VCALENDAR object
-     * and exactly one enclosed VTIMEZONE component. All components,
-     * properties and parameters are validated according to RFC 2445.
-     *
-     * @param ical the iCalendar string to parse
-     * @return the  <code>VTimeZone</code> representing the extracted
-     * timezone, or <code>null</code> if the iCalendar string is
-     *  <code>null</code>
-     * @throws CosmoDavException if the iCalendar string cannot be parsed or is
-     * not a valid iCalendar object containing a single VTIMEZONE component
-     */
-    public static VTimeZone extract(String ical)
-        throws CosmoDavException {
-        Calendar calendar = extractInCalendar(ical);
-        if (calendar == null) {
-            return null;
-        }
-        return (VTimeZone) calendar.getComponent(Component.VTIMEZONE);
-    }
+	/**
+	 * Creates an instance of <code>VTimeZone</code> from an iCalendar string.
+	 *
+	 * The iCalendar string must include an enclosing VCALENDAR object and exactly
+	 * one enclosed VTIMEZONE component. All components, properties and parameters
+	 * are validated according to RFC 2445.
+	 *
+	 * @param ical the iCalendar string to parse
+	 * @return the <code>VTimeZone</code> representing the extracted timezone, or
+	 *         <code>null</code> if the iCalendar string is <code>null</code>
+	 * @throws CosmoDavException if the iCalendar string cannot be parsed or is not
+	 *                           a valid iCalendar object containing a single
+	 *                           VTIMEZONE component
+	 */
+	public static VTimeZone extract(String ical)
+			throws CosmoDavException {
+		Calendar calendar = extractInCalendar(ical);
+		if (calendar == null) {
+			return null;
+		}
+		return (VTimeZone) calendar.getComponent(Component.VTIMEZONE);
+	}
 
-    /**
-     * Creates an instance of <code>VTimeZone</code> from an
-     * iCalendar string.
-     *
-     * The iCalendar string must include an enclosing VCALENDAR object
-     * and exactly one enclosed VTIMEZONE component. All components,
-     * properties and parameters are validated according to RFC 2445.
-     *
-     * @param ical the iCalendar string to parse
-     * @return a <code>Calendar</code> containing a single
-     *  <code>VTimeZone</code> representing the extracted timezone, or 
-     * code>null</code> if the iCalendar string is <code>null</code>
-     * @throws CosmoDavException if the iCalendar string cannot be parsed or is
-     * not a valid iCalendar object containing a single VTIMEZONE component
-     */
-    public static Calendar extractInCalendar(String ical)
-        throws CosmoDavException {
-        if (ical == null) {
-            return null;
-        }
+	/**
+	 * Creates an instance of <code>VTimeZone</code> from an iCalendar string.
+	 *
+	 * The iCalendar string must include an enclosing VCALENDAR object and exactly
+	 * one enclosed VTIMEZONE component. All components, properties and parameters
+	 * are validated according to RFC 2445.
+	 *
+	 * @param ical the iCalendar string to parse
+	 * @return a <code>Calendar</code> containing a single <code>VTimeZone</code>
+	 *         representing the extracted timezone, or code>null</code> if the
+	 *         iCalendar string is <code>null</code>
+	 * @throws CosmoDavException if the iCalendar string cannot be parsed or is not
+	 *                           a valid iCalendar object containing a single
+	 *                           VTIMEZONE component
+	 */
+	public static Calendar extractInCalendar(String ical)
+			throws CosmoDavException {
+		if (ical == null) {
+			return null;
+		}
 
-        Calendar calendar;
-        try {
-            CalendarBuilder builder = new CalendarBuilder();
-            calendar = builder.build(new StringReader(ical));
-            CalendarClientsAdapter.adaptTimezoneCalendarComponent(calendar);
-            calendar.validate(true);
-        } catch (IOException e) {
-            throw new CosmoDavException(e);
-        } catch (ParserException e) {
-            throw new InvalidCalendarDataException("Calendar object not parseable: " + e.getMessage());
-        } catch (ValidationException e) {
-            throw new InvalidCalendarDataException("Invalid calendar object: " + e.getMessage());
-        }
+		Calendar calendar;
+		try {
+			CalendarBuilder builder = new CalendarBuilder();
+			calendar = builder.build(new StringReader(ical));
+			CalendarClientsAdapter.adaptTimezoneCalendarComponent(calendar);
+			calendar.validate(true);
+		} catch (IOException e) {
+			throw new CosmoDavException(e);
+		} catch (ParserException e) {
+			throw new InvalidCalendarDataException("Calendar object not parseable: " + e.getMessage());
+		} catch (ValidationException e) {
+			throw new InvalidCalendarDataException("Invalid calendar object: " + e.getMessage());
+		}
 
-        if (calendar.getComponents().size() > 1) {
-            throw new InvalidCalendarDataException("Calendar object contains more than one VTIMEZONE component");
-        }
+		if (calendar.getComponents().size() > 1) {
+			throw new InvalidCalendarDataException("Calendar object contains more than one VTIMEZONE component");
+		}
 
-        VTimeZone vtz = (VTimeZone)
-            calendar.getComponent(Component.VTIMEZONE);
-        if (vtz == null) {
-            throw new InvalidCalendarDataException("Calendar object must contain a VTIMEZONE component");
-        }
+		VTimeZone vtz = (VTimeZone) calendar.getComponent(Component.VTIMEZONE);
+		if (vtz == null) {
+			throw new InvalidCalendarDataException("Calendar object must contain a VTIMEZONE component");
+		}
 
-        return calendar;
-    }
+		return calendar;
+	}
 }

@@ -27,35 +27,36 @@ import org.unitedinternet.cosmo.dav.ExtendedDavConstants;
  */
 public interface WebDavProperty<T> extends PropEntry, ExtendedDavConstants {
 
-    /**
-     * <p>
-     * Returns the text content of the property value as a string. The string
-     * is calculated by concatening the text and character data content of
-     * every element in the value.
-     * </p>
-     */
-    String getValueText();
+	/**
+	 * <p>
+	 * Returns the text content of the property value as a string. The string is
+	 * calculated by concatening the text and character data content of every
+	 * element in the value.
+	 * </p>
+	 */
+	String getValueText();
 
-    /**
-     * Returns the name of this property
-     *
-     * @return the name of this property
-     */
-    DavPropertyName getName();
+	/**
+	 * Returns the name of this property
+	 *
+	 * @return the name of this property
+	 */
+	DavPropertyName getName();
 
-    /**
-     * Returns the value of this property
-     *
-     * @return the value of this property
-     */
-    T getValue();
+	/**
+	 * Returns the value of this property
+	 *
+	 * @return the value of this property
+	 */
+	T getValue();
 
-    /**
-     * Return <code>true</code> if this property should be suppressed
-     * in a PROPFIND/{@link DavConstants#PROPFIND_ALL_PROP DAV:allprop}
-     * response. See RFC 4918, Section 9.1.
-     *
-     * @return true, if this property should be suppressed in a PROPFIND/allprop response
-     */
-    boolean isInvisibleInAllprop();
+	/**
+	 * Return <code>true</code> if this property should be suppressed in a
+	 * PROPFIND/{@link DavConstants#PROPFIND_ALL_PROP DAV:allprop} response. See RFC
+	 * 4918, Section 9.1.
+	 *
+	 * @return true, if this property should be suppressed in a PROPFIND/allprop
+	 *         response
+	 */
+	boolean isInvisibleInAllprop();
 }

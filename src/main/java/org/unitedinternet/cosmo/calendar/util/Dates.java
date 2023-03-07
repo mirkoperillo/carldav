@@ -23,28 +23,26 @@ import net.fortuna.ical4j.model.DateTime;
  *
  */
 public class Dates {
-    
-    /**
-     * Returns a new date instance matching the type and timezone of the other
-     * date. If no type is specified a DateTime instance is returned.
-     * 
-     * @param date
-     *            a seed Java date instance
-     * @param type
-     *            the type of date instance
-     * @return an instance of <code>net.fortuna.ical4j.model.Date</code>
-     */
-    public static Date getInstance(final java.util.Date date, final Date type) {
-        if (type instanceof DateTime) {
-            DateTime dt = new DateTime(date);
-            if (((DateTime) type).isUtc()) {
-                dt.setUtc(true);
-            } else {
-                dt.setTimeZone(((DateTime) type).getTimeZone());
-            }
-            return dt;
-        } else {
-            return new Date(date);
-        }
-    }
+
+	/**
+	 * Returns a new date instance matching the type and timezone of the other date.
+	 * If no type is specified a DateTime instance is returned.
+	 * 
+	 * @param date a seed Java date instance
+	 * @param type the type of date instance
+	 * @return an instance of <code>net.fortuna.ical4j.model.Date</code>
+	 */
+	public static Date getInstance(final java.util.Date date, final Date type) {
+		if (type instanceof DateTime) {
+			DateTime dt = new DateTime(date);
+			if (((DateTime) type).isUtc()) {
+				dt.setUtc(true);
+			} else {
+				dt.setTimeZone(((DateTime) type).getTimeZone());
+			}
+			return dt;
+		} else {
+			return new Date(date);
+		}
+	}
 }

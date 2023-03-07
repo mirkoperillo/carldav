@@ -22,60 +22,59 @@ import static org.unitedinternet.cosmo.dav.caldav.CaldavConstants.ELEMENT_CALDAV
 
 public abstract class CaldavMultiStatusReport extends MultiStatusReport {
 
-    private OutputFilter outputFilter;
+	private OutputFilter outputFilter;
 
-    protected DavPropertyNameSet createResultPropSpec() {
-        var spec = super.createResultPropSpec();
-        spec.remove(CALENDAR_DATA);
-        return spec;
-    }
+	protected DavPropertyNameSet createResultPropSpec() {
+		var spec = super.createResultPropSpec();
+		spec.remove(CALENDAR_DATA);
+		return spec;
+	}
 
-    protected MultiStatusResponse buildMultiStatusResponse(WebDavResource resource, DavPropertyNameSet props) {
-        var msr = super.buildMultiStatusResponse(resource, props);
+	protected MultiStatusResponse buildMultiStatusResponse(WebDavResource resource, DavPropertyNameSet props) {
+		var msr = super.buildMultiStatusResponse(resource, props);
 
-        var dcr = (DavCalendarResource) resource;
-        if (getPropFindProps().contains(CALENDAR_DATA)) {
-            msr.add(new CalendarData(readCalendarData(dcr)));
-        }
+		var dcr = (DavCalendarResource) resource;
+		if (getPropFindProps().contains(CALENDAR_DATA)) {
+			msr.add(new CalendarData(readCalendarData(dcr)));
+		}
 
-        return msr;
-    }
+		return msr;
+	}
 
-    public void setOutputFilter(OutputFilter outputFilter) {
-        this.outputFilter = outputFilter;
-    }
+	public void setOutputFilter(OutputFilter outputFilter) {
+		this.outputFilter = outputFilter;
+	}
 
-    protected OutputFilter findOutputFilter(ReportInfo info) {
-        var propdata = DomUtils.getChildElement(getReportElementFrom(info), caldav(XML_PROP));
-        if (propdata == null) {
-            return null;
-        }
+	protected OutputFilter findOutputFilter(ReportInfo info) {
+		var propdata = DomUtils.getChildElement(getReportElementFrom(info), caldav(XML_PROP));
+		if (propdata == null) {
+			return null;
+		}
 
-        var cdata = DomUtils.getChildElement(propdata, c(ELEMENT_CALDAV_CALENDAR_DATA));
-        if (cdata == null) {
-            return null;
-        }
+		var cdata = DomUtils.getChildElement(propdata, c(ELEMENT_CALDAV_CALENDAR_DATA));
+		if (cdata == null) {
+			return null;
+		}
 
-        return new CaldavOutputFilter().createFromXml(cdata);
-    }
+		return new CaldavOutputFilter().createFromXml(cdata);
+	}
 
-    private String readCalendarData(DavCalendarResource resource) {
-        if (! resource.exists()) {
-            return null;
-        }
-        var calendarString = resource.getCalendar();
-        var buffer = new StringBuffer();
-        if (outputFilter != null) {
-            try {
-                final Calendar calendar = new CalendarBuilder().build(new StringReader(calendarString));
-                outputFilter.filter(calendar, buffer);
-            } catch (Exception exception) {
-                throw new RuntimeException(exception.getMessage(), exception);
-            }
-        }
-        else {
-            buffer.append(calendarString);
-        }
-        return buffer.toString();
-    }
+	private String readCalendarData(DavCalendarResource resource) {
+		if (!resource.exists()) {
+			return null;
+		}
+		var calendarString = resource.getCalendar();
+		var buffer = new StringBuffer();
+		if (outputFilter != null) {
+			try {
+				final Calendar calendar = new CalendarBuilder().build(new StringReader(calendarString));
+				outputFilter.filter(calendar, buffer);
+			} catch (Exception exception) {
+				throw new RuntimeException(exception.getMessage(), exception);
+			}
+		} else {
+			buffer.append(calendarString);
+		}
+		return buffer.toString();
+	}
 }

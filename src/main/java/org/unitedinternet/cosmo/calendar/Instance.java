@@ -22,90 +22,91 @@ import net.fortuna.ical4j.model.DateTime;
 /**
  * @author cyrusdaboo
  * 
- * This class represents an instance of a (possibly) recurring component.
+ *         This class represents an instance of a (possibly) recurring
+ *         component.
  */
 public class Instance {
 
-    private Component comp;
-    private Date start;
-    private Date end;
-    private Date rid;
-    private boolean overridden;
+	private Component comp;
+	private Date start;
+	private Date end;
+	private Date rid;
+	private boolean overridden;
 
-    /**
-     * @param comp The component.
-     * @param end The date.
-     * @param start The date.
-     */
-    public Instance(Component comp, Date start, Date end) {
-        this(comp, start, end, start, false);
-    }
+	/**
+	 * @param comp  The component.
+	 * @param end   The date.
+	 * @param start The date.
+	 */
+	public Instance(Component comp, Date start, Date end) {
+		this(comp, start, end, start, false);
+	}
 
-    /**
-     * @param comp The component.
-     * @param start The date. 
-     * @param end The date.
-     * @param rid The date.
-     * @param overridden Boolean.
-     */
-    public Instance(Component comp, Date start, Date end, Date rid, boolean overridden) {
-        this.comp = comp;
-        this.start = start;
-        this.end = end;
-        this.rid = copyNormalisedDate(rid);
-        this.overridden = overridden;
-    }
+	/**
+	 * @param comp       The component.
+	 * @param start      The date.
+	 * @param end        The date.
+	 * @param rid        The date.
+	 * @param overridden Boolean.
+	 */
+	public Instance(Component comp, Date start, Date end, Date rid, boolean overridden) {
+		this.comp = comp;
+		this.start = start;
+		this.end = end;
+		this.rid = copyNormalisedDate(rid);
+		this.overridden = overridden;
+	}
 
-    /**
-     * @return Returns the component.
-     */
-    public Component getComp() {
-        return comp;
-    }
+	/**
+	 * @return Returns the component.
+	 */
+	public Component getComp() {
+		return comp;
+	}
 
-    /**
-     * @return Returns the start.
-     */
-    public Date getStart() {
-        return start;
-    }
+	/**
+	 * @return Returns the start.
+	 */
+	public Date getStart() {
+		return start;
+	}
 
-    /**
-     * @return Returns the end.
-     */
-    public Date getEnd() {
-        return end;
-    }
+	/**
+	 * @return Returns the end.
+	 */
+	public Date getEnd() {
+		return end;
+	}
 
-    /**
-     * @return Returns the rid.
-     */
-    public Date getRid() {
-        return rid;
-    }
+	/**
+	 * @return Returns the rid.
+	 */
+	public Date getRid() {
+		return rid;
+	}
 
-    /**
-     * @return Returns the overridden.
-     */
-    public boolean isOverridden() {
-        return overridden;
-    }
+	/**
+	 * @return Returns the overridden.
+	 */
+	public boolean isOverridden() {
+		return overridden;
+	}
 
-    /**
-     * Copy a Date/DateTime and normalise to UTC if its not floating.
-     * 
-     * @param date The date.
-     * @return The date.
-     */
-    private Date copyNormalisedDate(Date date) {
-        if (date instanceof DateTime) {
-            DateTime dt = new DateTime(date);
-            if (!dt.isUtc() && dt.getTimeZone() != null) {
-                dt.setUtc(true);
-            }
-            return dt;
-        } else {
-            return new Date(date);
-        }
-    }
+	/**
+	 * Copy a Date/DateTime and normalise to UTC if its not floating.
+	 * 
+	 * @param date The date.
+	 * @return The date.
+	 */
+	private Date copyNormalisedDate(Date date) {
+		if (date instanceof DateTime) {
+			DateTime dt = new DateTime(date);
+			if (!dt.isUtc() && dt.getTimeZone() != null) {
+				dt.setUtc(true);
+			}
+			return dt;
+		} else {
+			return new Date(date);
+		}
+	}
 }

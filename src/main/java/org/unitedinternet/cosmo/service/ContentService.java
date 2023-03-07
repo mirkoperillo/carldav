@@ -24,56 +24,51 @@ import carldav.entity.User;
  */
 public interface ContentService {
 
-    /**
-     * Remove an item from a collection.  The item will be removed if
-     * it belongs to no more collections.
-     * @param item item to remove from collection
-     * @param collection item to remove item from
-     */
-    void removeItemFromCollection(Item item, CollectionItem collection);
+	/**
+	 * Remove an item from a collection. The item will be removed if it belongs to
+	 * no more collections.
+	 * 
+	 * @param item       item to remove from collection
+	 * @param collection item to remove item from
+	 */
+	void removeItemFromCollection(Item item, CollectionItem collection);
 
-    /**
-     * Create a new collection.
-     * 
-     * @param parent
-     *            parent of collection.
-     * @param collection
-     *            collection to create
-     * @return newly created collection
-     */
-    CollectionItem createCollection(CollectionItem parent,
-                                    CollectionItem collection);
+	/**
+	 * Create a new collection.
+	 * 
+	 * @param parent     parent of collection.
+	 * @param collection collection to create
+	 * @return newly created collection
+	 */
+	CollectionItem createCollection(CollectionItem parent,
+			CollectionItem collection);
 
-    /**
-     * Remove collection item
-     * 
-     * @param collection
-     *            collection item to remove
-     */
-    void removeCollection(CollectionItem collection);
+	/**
+	 * Remove collection item
+	 * 
+	 * @param collection collection item to remove
+	 */
+	void removeCollection(CollectionItem collection);
 
-    /**
-     * Create new content item. A content item represents a piece of content or
-     * file.
-     * 
-     * @param parent
-     *            parent collection of content. If null, content is assumed to
-     *            live in the top-level user collection
-     * @param content
-     *            content to create
-     * @return newly created content
-     */
-    Item createContent(CollectionItem parent,
-                       Item content);
+	/**
+	 * Create new content item. A content item represents a piece of content or
+	 * file.
+	 * 
+	 * @param parent  parent collection of content. If null, content is assumed to
+	 *                live in the top-level user collection
+	 * @param content content to create
+	 * @return newly created content
+	 */
+	Item createContent(CollectionItem parent,
+			Item content);
 
-    /**
-     * Update an existing content item.
-     * 
-     * @param content
-     *            content item to update
-     * @return updated content item
-     */
-    Item updateContent(Item content);
+	/**
+	 * Update an existing content item.
+	 * 
+	 * @param content content item to update
+	 * @return updated content item
+	 */
+	Item updateContent(Item content);
 
-    CollectionItem createRootItem(User user);
+	CollectionItem createRootItem(User user);
 }

@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ItemRepositoryCustom {
 
-  List<Item> findAll(ItemQuery query);
+	List<Item> findAll(ItemQuery query);
 
 }

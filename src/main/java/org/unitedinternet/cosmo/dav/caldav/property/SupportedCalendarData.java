@@ -27,20 +27,21 @@ import org.w3c.dom.Element;
 
 public class SupportedCalendarData extends StandardDavProperty implements ICalendarConstants, CaldavConstants {
 
-    public SupportedCalendarData() {
-        super(SUPPORTED_CALENDAR_DATA, null);
-    }
+	public SupportedCalendarData() {
+		super(SUPPORTED_CALENDAR_DATA, null);
+	}
 
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        Element element = DomUtils.createElement(document, ELEMENT_CALDAV_CALENDAR_DATA, c(ELEMENT_CALDAV_CALENDAR_DATA));
-        DomUtils.setAttribute(element, ATTR_CALDAV_CONTENT_TYPE, c(ATTR_CALDAV_CONTENT_TYPE), ICALENDAR_MEDIA_TYPE);
-        DomUtils.setAttribute(element, ATTR_CALDAV_VERSION, c(ATTR_CALDAV_VERSION), ICALENDAR_VERSION);
+		Element element = DomUtils.createElement(document, ELEMENT_CALDAV_CALENDAR_DATA,
+				c(ELEMENT_CALDAV_CALENDAR_DATA));
+		DomUtils.setAttribute(element, ATTR_CALDAV_CONTENT_TYPE, c(ATTR_CALDAV_CONTENT_TYPE), ICALENDAR_MEDIA_TYPE);
+		DomUtils.setAttribute(element, ATTR_CALDAV_VERSION, c(ATTR_CALDAV_VERSION), ICALENDAR_VERSION);
 
-        name.appendChild(element);
+		name.appendChild(element);
 
-        return name;
-    }
+		return name;
+	}
 
 }

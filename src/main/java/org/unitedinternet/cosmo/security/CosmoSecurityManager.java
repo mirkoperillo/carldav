@@ -21,13 +21,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class CosmoSecurityManager {
 
-    public String getUsername() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        if (authentication == null) {
-            throw new RuntimeException("no Authentication found in SecurityContext");
-        }
+	public String getUsername() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		if (authentication == null) {
+			throw new RuntimeException("no Authentication found in SecurityContext");
+		}
 
-        return authentication.getName();
-    }
+		return authentication.getName();
+	}
 }

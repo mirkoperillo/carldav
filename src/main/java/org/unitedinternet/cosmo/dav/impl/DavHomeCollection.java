@@ -22,15 +22,15 @@ import carldav.entity.CollectionItem;
 
 public class DavHomeCollection extends DavCollectionBase {
 
-    public DavHomeCollection(CollectionItem collection,
-                             DavResourceLocator locator,
-                             DavResourceFactory factory)
-            throws CosmoDavException {
-        super(collection, locator, factory);
-    }
+	public DavHomeCollection(CollectionItem collection,
+			DavResourceLocator locator,
+			DavResourceFactory factory)
+			throws CosmoDavException {
+		super(collection, locator, factory);
+	}
 
-    public String getSupportedMethods() {
-        return "OPTIONS, GET, HEAD, PROPFIND";
-    }
+	public String getSupportedMethods() {
+		return "OPTIONS, GET, HEAD, PROPFIND";
+	}
 
 }

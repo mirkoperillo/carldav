@@ -16,20 +16,20 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {CarldavApplication.class, TestData.class})
+@SpringBootTest(classes = { CarldavApplication.class, TestData.class })
 @Transactional
 @Rollback
 public abstract class IntegrationTestSupport {
 
-    protected MockMvc mockMvc;
+	protected MockMvc mockMvc;
 
-    @Autowired
-    private WebApplicationContext wac;
+	@Autowired
+	private WebApplicationContext wac;
 
-    @BeforeEach
-    public void beforeAnyOther() {
-        this.mockMvc = webAppContextSetup(this.wac)
-                .apply(springSecurity())
-                .build();
-    }
+	@BeforeEach
+	public void beforeAnyOther() {
+		this.mockMvc = webAppContextSetup(this.wac)
+				.apply(springSecurity())
+				.build();
+	}
 }

@@ -12,21 +12,21 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface DavResourceFactory {
 
-  WebDavResource resolve(DavResourceLocator locator, HttpServletRequest request) throws CosmoDavException;
+	WebDavResource resolve(DavResourceLocator locator, HttpServletRequest request) throws CosmoDavException;
 
-  WebDavResource resolve(DavResourceLocator locator) throws CosmoDavException;
+	WebDavResource resolve(DavResourceLocator locator) throws CosmoDavException;
 
-  WebDavResource createResource(DavResourceLocator locator, Item item) throws CosmoDavException;
+	WebDavResource createResource(DavResourceLocator locator, Item item) throws CosmoDavException;
 
-  WebDavResource createCollectionResource(DavResourceLocator locator, CollectionItem hibItem);
+	WebDavResource createCollectionResource(DavResourceLocator locator, CollectionItem hibItem);
 
-  ContentService getContentService();
+	ContentService getContentService();
 
-  CalendarQueryProcessor getCalendarQueryProcessor();
+	CalendarQueryProcessor getCalendarQueryProcessor();
 
-  CosmoSecurityManager getSecurityManager();
+	CosmoSecurityManager getSecurityManager();
 
-  ItemRepository getItemRepository();
+	ItemRepository getItemRepository();
 
-  CollectionRepository getCollectionRepository();
+	CollectionRepository getCollectionRepository();
 }

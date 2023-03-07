@@ -10,25 +10,25 @@ import java.util.Date;
  */
 public final class ETagUtil {
 
-    public static String createETag(Long id, Date modifiedDate) {
-        if(id == null && modifiedDate == null) {
-            return null;
-        }
+	public static String createETag(Long id, Date modifiedDate) {
+		if (id == null && modifiedDate == null) {
+			return null;
+		}
 
-        String uid = String.valueOf(id);
-        String modTime = modifiedDate != null ? String.valueOf(modifiedDate.getTime()) : "";
-        final String etag = uid + ":" + modTime;
+		String uid = String.valueOf(id);
+		String modTime = modifiedDate != null ? String.valueOf(modifiedDate.getTime()) : "";
+		final String etag = uid + ":" + modTime;
 
-        return DigestUtils.md5Hex(etag.getBytes(Charset.forName("UTF-8")));
-    }
+		return DigestUtils.md5Hex(etag.getBytes(Charset.forName("UTF-8")));
+	}
 
-    public static String createETagEscaped(Long id, Date modifiedDate) {
-        final String eTag = createETag(id, modifiedDate);
+	public static String createETagEscaped(Long id, Date modifiedDate) {
+		final String eTag = createETag(id, modifiedDate);
 
-        if(eTag == null) {
-            return null;
-        }
+		if (eTag == null) {
+			return null;
+		}
 
-        return "\"" + eTag + "\"";
-    }
+		return "\"" + eTag + "\"";
+	}
 }

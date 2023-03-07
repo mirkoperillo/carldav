@@ -14,25 +14,27 @@ import java.io.IOException;
 
 public class AuthenticateWith401StatusCodeHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
 
-  private final String realmName;
+	private final String realmName;
 
-  public AuthenticateWith401StatusCodeHandler(final String realmName) {
-    Assert.notNull(realmName, "realmName must be specified");
-    this.realmName = realmName;
-  }
+	public AuthenticateWith401StatusCodeHandler(final String realmName) {
+		Assert.notNull(realmName, "realmName must be specified");
+		this.realmName = realmName;
+	}
 
-  @Override
-  public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-    sendAuthentication(response);
-  }
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
+			throws IOException, ServletException {
+		sendAuthentication(response);
+	}
 
-  @Override
-  public void handle(HttpServletRequest httpServletRequest, HttpServletResponse response, AccessDeniedException exception) throws IOException, ServletException {
-    sendAuthentication(response);
-  }
+	@Override
+	public void handle(HttpServletRequest httpServletRequest, HttpServletResponse response,
+			AccessDeniedException exception) throws IOException, ServletException {
+		sendAuthentication(response);
+	}
 
-  private void sendAuthentication(HttpServletResponse response) {
-    response.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realmName));
-    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-  }
+	private void sendAuthentication(HttpServletResponse response) {
+		response.addHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realmName));
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	}
 }

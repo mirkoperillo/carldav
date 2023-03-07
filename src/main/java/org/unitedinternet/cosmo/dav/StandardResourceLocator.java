@@ -29,143 +29,140 @@ import java.net.URL;
  */
 public class StandardResourceLocator implements DavResourceLocator {
 
-    private URL context;
-    private String path;
-    private StandardResourceLocatorFactory factory;
+	private URL context;
+	private String path;
+	private StandardResourceLocatorFactory factory;
 
-    /**
-     * @param context the URL specifying protocol, authority and unescaped
-     * base path
-     * @param path the unescaped dav-relative path of the resource
-     * @param factory the locator factory
-     */
-    public StandardResourceLocator(URL context,
-                                   String path,
-                                   StandardResourceLocatorFactory factory) {
-        this.context = context;
-        this.path = path.endsWith("/") && ! path.equals("/") ?
-            path.substring(0, path.length()-1) : path;
-        this.factory = factory;
-    }
+	/**
+	 * @param context the URL specifying protocol, authority and unescaped base path
+	 * @param path    the unescaped dav-relative path of the resource
+	 * @param factory the locator factory
+	 */
+	public StandardResourceLocator(URL context,
+			String path,
+			StandardResourceLocatorFactory factory) {
+		this.context = context;
+		this.path = path.endsWith("/") && !path.equals("/") ? path.substring(0, path.length() - 1) : path;
+		this.factory = factory;
+	}
 
-    // DavResourceLocator methods
+	// DavResourceLocator methods
 
-    public String getHref(boolean isCollection) {
-        return getHref(false, isCollection);
-    }
+	public String getHref(boolean isCollection) {
+		return getHref(false, isCollection);
+	}
 
-    public String getHref(boolean absolute,
-                          boolean isCollection) {
-        try {
-            return buildHref(context, isCollection, absolute);
-        } catch (Exception e) {
-            throw new CosmoException(e);
-        }
-    }
+	public String getHref(boolean absolute,
+			boolean isCollection) {
+		try {
+			return buildHref(context, isCollection, absolute);
+		} catch (Exception e) {
+			throw new CosmoException(e);
+		}
+	}
 
-    public URL getUrl(boolean absolute,
-                      boolean isCollection) {
-    try {
-        return new URL(getHref(absolute, isCollection));
-    } catch (Exception e) {
-        throw new CosmoException(e);
-    }
-    }
+	public URL getUrl(boolean absolute,
+			boolean isCollection) {
+		try {
+			return new URL(getHref(absolute, isCollection));
+		} catch (Exception e) {
+			throw new CosmoException(e);
+		}
+	}
 
-    public String getBaseHref() {
-        return getBaseHref(false);
-    }
+	public String getBaseHref() {
+		return getBaseHref(false);
+	}
 
-    public String getBaseHref(boolean absolute) {
-        try {
-            if (absolute) {
-                return context.toURI().toASCIIString();
-            }
-            return new URI(null, null, context.getPath(), null).
-                toASCIIString();
-        } catch (Exception e) {
-            throw new CosmoException(e);
-        }
-    }
+	public String getBaseHref(boolean absolute) {
+		try {
+			if (absolute) {
+				return context.toURI().toASCIIString();
+			}
+			return new URI(null, null, context.getPath(), null).toASCIIString();
+		} catch (Exception e) {
+			throw new CosmoException(e);
+		}
+	}
 
-    public String getPath() {
-        return path;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public URL getContext() {
-        return context;
-    }
+	public URL getContext() {
+		return context;
+	}
 
-    public DavResourceLocator getParentLocator() {
-        return factory.createResourceLocatorByPath(context,
-                                             PathUtil.getParentPath(path));
-    }
+	public DavResourceLocator getParentLocator() {
+		return factory.createResourceLocatorByPath(context,
+				PathUtil.getParentPath(path));
+	}
 
-    public DavResourceLocatorFactory getFactory() {
-        return factory;
-    }
+	public DavResourceLocatorFactory getFactory() {
+		return factory;
+	}
 
-    @Override
-    public String collection() {
-        final String[] split = getPath().split("/");
-        return split.length > 3 ? split[3] : null;
-    }
+	@Override
+	public String collection() {
+		final String[] split = getPath().split("/");
+		return split.length > 3 ? split[3] : null;
+	}
 
-    @Override
-    public String itemUid() {
-        final String[] split = getPath().split("/");
-        return split.length > 4 ? split[4] : null;
-    }
+	@Override
+	public String itemUid() {
+		final String[] split = getPath().split("/");
+		return split.length > 4 ? split[4] : null;
+	}
 
-    @Override
-    public String contextPath() {
-        final String[] split = context.getPath().split("/");
-        return split[1];
-    }
+	@Override
+	public String contextPath() {
+		final String[] split = context.getPath().split("/");
+		return split[1];
+	}
 
-    private String buildHref(URL context, boolean isCollection, boolean absolute) throws URISyntaxException {
-        String protocol = context.getProtocol();
-        String host = context.getHost();
-        String path = isCollection && ! this.path.equals("/") ? this.path  + "/" : this.path;
-        path = context.getPath() + path;
-        int port = context.getPort();
-        StringBuilder sb = new StringBuilder();
-        
-        if (protocol != null && absolute) {
-            sb.append(protocol);
-            sb.append(':');
-        }
-        
-        if (host != null && absolute) {
-            sb.append("//");
-            
-            boolean needBrackets = ((host.indexOf(':') >= 0)
-                                && !host.startsWith("[")
-                                && !host.endsWith("]"));
-            if (needBrackets) {
-                sb.append('[');
-            }
-            
-            sb.append(host);
-            
-            if (needBrackets){ 
-                sb.append(']');
-            }
-            
-            if (port != -1) {
-                sb.append(':');
-                sb.append(port);
-            }
-            
-        }
-        
-        if (path != null){
-            sb.append(path);
-        }
-        
-        if(isCollection && sb.charAt(sb.length()-1) != '/'){
-            sb.append("/");
-        }
-        return sb.toString();
-    }
+	private String buildHref(URL context, boolean isCollection, boolean absolute) throws URISyntaxException {
+		String protocol = context.getProtocol();
+		String host = context.getHost();
+		String path = isCollection && !this.path.equals("/") ? this.path + "/" : this.path;
+		path = context.getPath() + path;
+		int port = context.getPort();
+		StringBuilder sb = new StringBuilder();
+
+		if (protocol != null && absolute) {
+			sb.append(protocol);
+			sb.append(':');
+		}
+
+		if (host != null && absolute) {
+			sb.append("//");
+
+			boolean needBrackets = ((host.indexOf(':') >= 0)
+					&& !host.startsWith("[")
+					&& !host.endsWith("]"));
+			if (needBrackets) {
+				sb.append('[');
+			}
+
+			sb.append(host);
+
+			if (needBrackets) {
+				sb.append(']');
+			}
+
+			if (port != -1) {
+				sb.append(':');
+				sb.append(port);
+			}
+
+		}
+
+		if (path != null) {
+			sb.append(path);
+		}
+
+		if (isCollection && sb.charAt(sb.length() - 1) != '/') {
+			sb.append("/");
+		}
+		return sb.toString();
+	}
 }

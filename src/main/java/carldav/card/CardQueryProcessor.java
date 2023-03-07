@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface CardQueryProcessor {
 
-    List<Item> filterQuery(CollectionItem collection, AddressbookFilter filter);
+	List<Item> filterQuery(CollectionItem collection, AddressbookFilter filter);
 }

@@ -8,13 +8,13 @@ import java.text.ParseException;
 
 public class AddressbookFilter implements CaldavConstants {
 
-   // private final ComponentFilter filter = null;
+	// private final ComponentFilter filter = null;
 
-    public AddressbookFilter(Element element) throws ParseException {
-        Assert.notNull(element, "element is null");
-        //TODO filter not in use
-        // //new ComponentFilter(element, timezone)
-    }
+	public AddressbookFilter(Element element) throws ParseException {
+		Assert.notNull(element, "element is null");
+		// TODO filter not in use
+		// //new ComponentFilter(element, timezone)
+	}
 
 //    public ComponentFilter getFilter() {
 //        return filter;

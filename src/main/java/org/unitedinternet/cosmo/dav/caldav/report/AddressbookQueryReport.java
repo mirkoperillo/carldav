@@ -27,59 +27,60 @@ import static org.unitedinternet.cosmo.dav.caldav.CaldavConstants.PRE_CARD;
 
 public class AddressbookQueryReport extends MultiStatusReport {
 
-    public static final ReportType REPORT_TYPE_CARDDAV_QUERY =
-        ReportType.register(new QName(NS_CARDDAV, ELEMENT_CARDDAV_ADDRESSBOOK_QUERY, PRE_CARD), AddressbookQueryReport.class);
+	public static final ReportType REPORT_TYPE_CARDDAV_QUERY = ReportType
+			.register(new QName(NS_CARDDAV, ELEMENT_CARDDAV_ADDRESSBOOK_QUERY, PRE_CARD), AddressbookQueryReport.class);
 
-    private AddressbookFilter queryFilter;
+	private AddressbookFilter queryFilter;
 
-    @Override
-    protected void parseReport(final ReportInfo info) {
-        if (!getType().isRequestedReportType(info)) {
-            throw new CosmoDavException("Report not of type " + getType());
-        }
+	@Override
+	protected void parseReport(final ReportInfo info) {
+		if (!getType().isRequestedReportType(info)) {
+			throw new CosmoDavException("Report not of type " + getType());
+		}
 
-        setPropFindProps(info.getPropertyNameSet());
-        if (info.containsContentElement(DavConstants.ALLPROP)) {
-            setPropFindType(PROPFIND_ALL_PROP);
-        } else if (info.containsContentElement(DavConstants.PROPNAME)) {
-            setPropFindType(PROPFIND_PROPERTY_NAMES);
-        } else {
-            setPropFindType(PROPFIND_BY_PROPERTY);
-        }
+		setPropFindProps(info.getPropertyNameSet());
+		if (info.containsContentElement(DavConstants.ALLPROP)) {
+			setPropFindType(PROPFIND_ALL_PROP);
+		} else if (info.containsContentElement(DavConstants.PROPNAME)) {
+			setPropFindType(PROPFIND_PROPERTY_NAMES);
+		} else {
+			setPropFindType(PROPFIND_BY_PROPERTY);
+		}
 
-        queryFilter = findQueryFilter(info);
-    }
+		queryFilter = findQueryFilter(info);
+	}
 
-    @Override
-    protected void doQuerySelf(final WebDavResource resource) {
-        //no implementation;
-    }
+	@Override
+	protected void doQuerySelf(final WebDavResource resource) {
+		// no implementation;
+	}
 
-    @Override
-    protected void doQueryChildren(final DavCollection collection) {
-        if (collection instanceof DavCardCollection) {
-            var dcc = (DavCardCollection) collection;
-            getResults().addAll(dcc.findMembers(queryFilter));
-        }
-    }
+	@Override
+	protected void doQueryChildren(final DavCollection collection) {
+		if (collection instanceof DavCardCollection) {
+			var dcc = (DavCardCollection) collection;
+			getResults().addAll(dcc.findMembers(queryFilter));
+		}
+	}
 
-    public ReportType getType() {
-        return REPORT_TYPE_CARDDAV_QUERY;
-    }
+	public ReportType getType() {
+		return REPORT_TYPE_CARDDAV_QUERY;
+	}
 
-    private AddressbookFilter findQueryFilter(ReportInfo info) {
-        var filterdata = DomUtils.getChildElement(getReportElementFrom(info), CarldavConstants.carddav(CaldavConstants.ELEMENT_CALDAV_FILTER));
+	private AddressbookFilter findQueryFilter(ReportInfo info) {
+		var filterdata = DomUtils.getChildElement(getReportElementFrom(info),
+				CarldavConstants.carddav(CaldavConstants.ELEMENT_CALDAV_FILTER));
 
-        if (filterdata == null) {
-            return null;
-        }
+		if (filterdata == null) {
+			return null;
+		}
 
-        try {
-            return new AddressbookFilter(filterdata);
-        } catch (ParseException e) {
-            throw new InvalidFilterException(e);
-        } catch (UnsupportedCollationException e) {
-            throw new SupportedCollationException();
-        }
-    }
+		try {
+			return new AddressbookFilter(filterdata);
+		} catch (ParseException e) {
+			throw new InvalidFilterException(e);
+		} catch (UnsupportedCollationException e) {
+			throw new SupportedCollationException();
+		}
+	}
 }

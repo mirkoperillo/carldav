@@ -22,7 +22,7 @@ import static carldav.CarldavConstants.GET_ETAG;
  */
 public class Etag extends StandardDavProperty {
 
-    public Etag(String etag) {
-        super(GET_ETAG, etag);
-    }
+	public Etag(String etag) {
+		super(GET_ETAG, etag);
+	}
 }

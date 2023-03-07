@@ -10,16 +10,16 @@ import java.util.List;
 
 class CardQueryProcessorImpl implements CardQueryProcessor {
 
-  private final ItemRepository itemRepository;
+	private final ItemRepository itemRepository;
 
-  CardQueryProcessorImpl(final ItemRepository itemRepository) {
-    Assert.notNull(itemRepository, "itemRepository is null");
-    this.itemRepository = itemRepository;
-  }
+	CardQueryProcessorImpl(final ItemRepository itemRepository) {
+		Assert.notNull(itemRepository, "itemRepository is null");
+		this.itemRepository = itemRepository;
+	}
 
-  @Override
-  public List<Item> filterQuery(final CollectionItem collection, final AddressbookFilter filter) {
-    //TODO filter is not in use yet
-    return itemRepository.findByCollectionIdAndType(collection.getId(), Item.Type.VCARD.toString());
-  }
+	@Override
+	public List<Item> filterQuery(final CollectionItem collection, final AddressbookFilter filter) {
+		// TODO filter is not in use yet
+		return itemRepository.findByCollectionIdAndType(collection.getId(), Item.Type.VCARD.toString());
+	}
 }

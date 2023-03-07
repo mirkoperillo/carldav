@@ -19,19 +19,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * An exception indicating that while the request entity has correct syntax,
- * it includes instructions that cannot be processed.
+ * An exception indicating that while the request entity has correct syntax, it
+ * includes instructions that cannot be processed.
  */
 public class UnprocessableEntityException extends CosmoDavException {
-    
-    public UnprocessableEntityException(String message) {
-        super(422, message);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "unprocessable-entity");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	public UnprocessableEntityException(String message) {
+		super(422, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "unprocessable-entity");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

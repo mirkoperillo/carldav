@@ -26,21 +26,22 @@ import static carldav.CarldavConstants.GET_LAST_MODIFIED;
 
 public class LastModified extends StandardDavProperty {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.ENGLISH);
+	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
+			.withLocale(Locale.ENGLISH);
 
-    public LastModified(Date date) {
-        super(GET_LAST_MODIFIED, dateFormatLocal(date));
-    }
+	public LastModified(Date date) {
+		super(GET_LAST_MODIFIED, dateFormatLocal(date));
+	}
 
-    private static String dateFormatLocal(Date date) {
-        ZonedDateTime d;
+	private static String dateFormatLocal(Date date) {
+		ZonedDateTime d;
 
-        if (date == null) {
-            d = ZonedDateTime.now();
-        } else {
-            d = Instant.ofEpochMilli(date.getTime()).atZone(ZoneOffset.UTC);
-        }
+		if (date == null) {
+			d = ZonedDateTime.now();
+		} else {
+			d = Instant.ofEpochMilli(date.getTime()).atZone(ZoneOffset.UTC);
+		}
 
-        return formatter.format(d);
-    }
+		return formatter.format(d);
+	}
 }

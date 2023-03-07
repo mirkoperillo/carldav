@@ -34,94 +34,93 @@ import static org.unitedinternet.cosmo.dav.caldav.CaldavConstants.PRE_CALDAV;
 
 /**
  * <p>
- * Represents the <code>CALDAV:calendar-query</code> report that
- * provides a mechanism for finding calendar resources matching
- * specified criteria.
+ * Represents the <code>CALDAV:calendar-query</code> report that provides a
+ * mechanism for finding calendar resources matching specified criteria.
  * </p>
  */
 public class QueryReport extends CaldavMultiStatusReport {
 
-    public static final ReportType REPORT_TYPE_CALDAV_QUERY =
-            ReportType.register(new QName(NS_CALDAV, ELEMENT_CALDAV_CALENDAR_QUERY, PRE_CALDAV), QueryReport.class);
+	public static final ReportType REPORT_TYPE_CALDAV_QUERY = ReportType
+			.register(new QName(NS_CALDAV, ELEMENT_CALDAV_CALENDAR_QUERY, PRE_CALDAV), QueryReport.class);
 
-    private CalendarFilter queryFilter;
+	private CalendarFilter queryFilter;
 
-    public ReportType getType() {
-        return REPORT_TYPE_CALDAV_QUERY;
-    }
+	public ReportType getType() {
+		return REPORT_TYPE_CALDAV_QUERY;
+	}
 
-    protected void parseReport(ReportInfo info) {
-        if (!getType().isRequestedReportType(info)) {
-            throw new CosmoDavException("Report not of type " + getType());
-        }
+	protected void parseReport(ReportInfo info) {
+		if (!getType().isRequestedReportType(info)) {
+			throw new CosmoDavException("Report not of type " + getType());
+		}
 
-        setPropFindProps(info.getPropertyNameSet());
-        if (info.containsContentElement(ALLPROP)) {
-            setPropFindType(PROPFIND_ALL_PROP);
-        } else if (info.containsContentElement(PROPNAME)) {
-            setPropFindType(PROPFIND_PROPERTY_NAMES);
-        } else {
-            setPropFindType(PROPFIND_BY_PROPERTY);
-            setOutputFilter(findOutputFilter(info));
-        }
+		setPropFindProps(info.getPropertyNameSet());
+		if (info.containsContentElement(ALLPROP)) {
+			setPropFindType(PROPFIND_ALL_PROP);
+		} else if (info.containsContentElement(PROPNAME)) {
+			setPropFindType(PROPFIND_PROPERTY_NAMES);
+		} else {
+			setPropFindType(PROPFIND_BY_PROPERTY);
+			setOutputFilter(findOutputFilter(info));
+		}
 
-        VTimeZone tz = findTimeZone(info);
-        queryFilter = findQueryFilter(info, tz);
-    }
+		VTimeZone tz = findTimeZone(info);
+		queryFilter = findQueryFilter(info, tz);
+	}
 
-    protected void doQuerySelf(WebDavResource resource) {
-        if (resource instanceof DavCalendarResource) {
-            var dcr = (DavCalendarResource) resource;
-            if (dcr.matches(queryFilter)) {
-                getResults().add(dcr);
-            }
-        }
-        // if the resource is a collection, it will not match a calendar
-        // query, which only matches calendar resource, so we can ignore it
-    }
+	protected void doQuerySelf(WebDavResource resource) {
+		if (resource instanceof DavCalendarResource) {
+			var dcr = (DavCalendarResource) resource;
+			if (dcr.matches(queryFilter)) {
+				getResults().add(dcr);
+			}
+		}
+		// if the resource is a collection, it will not match a calendar
+		// query, which only matches calendar resource, so we can ignore it
+	}
 
-    protected void doQueryChildren(DavCollection collection) {
-        if (collection instanceof DavCalendarCollection) {
-            var dcc = (DavCalendarCollection) collection;
-            getResults().addAll(dcc.findMembers(queryFilter));
-        }
-        // if it's a regular collection, there won't be any calendar resources
-        // within it to match the query
-    }
+	protected void doQueryChildren(DavCollection collection) {
+		if (collection instanceof DavCalendarCollection) {
+			var dcc = (DavCalendarCollection) collection;
+			getResults().addAll(dcc.findMembers(queryFilter));
+		}
+		// if it's a regular collection, there won't be any calendar resources
+		// within it to match the query
+	}
 
-    private static VTimeZone findTimeZone(ReportInfo info) {
-        var propdata = DomUtils.getChildElement(getReportElementFrom(info), caldav(XML_PROP));
-        if (propdata == null) {
-            return null;
-        }
+	private static VTimeZone findTimeZone(ReportInfo info) {
+		var propdata = DomUtils.getChildElement(getReportElementFrom(info), caldav(XML_PROP));
+		if (propdata == null) {
+			return null;
+		}
 
-        var tzdata = DomUtils.getChildElement(propdata, c(ELEMENT_CALDAV_TIMEZONE));
-        if (tzdata == null) {
-            return null;
-        }
+		var tzdata = DomUtils.getChildElement(propdata, c(ELEMENT_CALDAV_TIMEZONE));
+		if (tzdata == null) {
+			return null;
+		}
 
-        var icaltz = DomUtils.getTextTrim(tzdata);
-        if (icaltz == null) {
-            throw new UnprocessableEntityException("Expected text content for " + ELEMENT_CALDAV_TIMEZONE);
-        }
+		var icaltz = DomUtils.getTextTrim(tzdata);
+		if (icaltz == null) {
+			throw new UnprocessableEntityException("Expected text content for " + ELEMENT_CALDAV_TIMEZONE);
+		}
 
-        return TimeZoneExtractor.extract(icaltz);
-    }
+		return TimeZoneExtractor.extract(icaltz);
+	}
 
-    private static CalendarFilter findQueryFilter(ReportInfo info, VTimeZone tz) {
-        var filterdata =  DomUtils.getChildElement(getReportElementFrom(info), c(ELEMENT_CALDAV_FILTER));
-        if (filterdata == null) {
-            return null;
-        }
+	private static CalendarFilter findQueryFilter(ReportInfo info, VTimeZone tz) {
+		var filterdata = DomUtils.getChildElement(getReportElementFrom(info), c(ELEMENT_CALDAV_FILTER));
+		if (filterdata == null) {
+			return null;
+		}
 
-        try {
-            var filter = new CalendarFilter(filterdata, tz);
-            filter.validate();
-            return filter;
-        } catch (ParseException e) {
-            throw new InvalidFilterException(e);
-        } catch (UnsupportedCollationException e) {
-            throw new SupportedCollationException();
-        }
-    }
+		try {
+			var filter = new CalendarFilter(filterdata, tz);
+			filter.validate();
+			return filter;
+		} catch (ParseException e) {
+			throw new InvalidFilterException(e);
+		} catch (UnsupportedCollationException e) {
+			throw new SupportedCollationException();
+		}
+	}
 }

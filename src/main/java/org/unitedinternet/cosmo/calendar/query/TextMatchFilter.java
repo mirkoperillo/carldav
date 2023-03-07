@@ -36,82 +36,83 @@ import java.text.ParseException;
  * 
  * <!ELEMENT text-match (#PCDATA)> PCDATA value: string
  * 
- * <!ATTLIST text-match collation CDATA "i;ascii-casemap" negate-condition (yes | no) "no">
+ * <!ATTLIST text-match collation CDATA "i;ascii-casemap" negate-condition (yes
+ * | no) "no">
  */
 public class TextMatchFilter implements DavConstants, CaldavConstants {
 
-    private static final String COLLATION_IASCII = "i;ascii-casemap";
-    public static final String COLLATION_OCTET = "i;octet";
+	private static final String COLLATION_IASCII = "i;ascii-casemap";
+	public static final String COLLATION_OCTET = "i;octet";
 
-    private boolean isNegateCondition;
-    private String collation;
-    private String value;
+	private boolean isNegateCondition;
+	private String collation;
+	private String value;
 
-    public TextMatchFilter(String value) {
-        this.value = value;
-    }
+	public TextMatchFilter(String value) {
+		this.value = value;
+	}
 
-    /**
-     * Construct a TextMatchFilter object from a DOM Element
-     * 
-     * @param element
-     *            The dom element.
-     * @throws ParseException
-     *             - if something is wrong this exception is thrown.
-     */
-    public TextMatchFilter(Element element) throws ParseException {
-        // Element data is string to match
-        // TODO: do we need to do this replacing??
-        value = DomUtils.getTextTrim(element).replaceAll("'", "''");
+	/**
+	 * Construct a TextMatchFilter object from a DOM Element
+	 * 
+	 * @param element The dom element.
+	 * @throws ParseException - if something is wrong this exception is thrown.
+	 */
+	public TextMatchFilter(Element element) throws ParseException {
+		// Element data is string to match
+		// TODO: do we need to do this replacing??
+		value = DomUtils.getTextTrim(element).replaceAll("'", "''");
 
-        // Check attribute for collation
-        collation = DomUtils.getAttribute(element, ATTR_CALDAV_COLLATION);
+		// Check attribute for collation
+		collation = DomUtils.getAttribute(element, ATTR_CALDAV_COLLATION);
 
-        String negateCondition = DomUtils.getAttribute(element, ATTR_CALDAV_NEGATE_CONDITION);
+		String negateCondition = DomUtils.getAttribute(element, ATTR_CALDAV_NEGATE_CONDITION);
 
-        if (VALUE_YES.equals(negateCondition)) {
-            isNegateCondition = true;
-        } else {
-            isNegateCondition = false;
-        }
-    }
+		if (VALUE_YES.equals(negateCondition)) {
+			isNegateCondition = true;
+		} else {
+			isNegateCondition = false;
+		}
+	}
 
-    public void setCollation(String collation) {
-        this.collation = collation;
-    }
+	public void setCollation(String collation) {
+		this.collation = collation;
+	}
 
-    public boolean isNegateCondition() {
-        return isNegateCondition;
-    }
+	public boolean isNegateCondition() {
+		return isNegateCondition;
+	}
 
-    public void setNegateCondition(boolean isNegateCondition) {
-        this.isNegateCondition = isNegateCondition;
-    }
+	public void setNegateCondition(boolean isNegateCondition) {
+		this.isNegateCondition = isNegateCondition;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    /**
-     * Returns true if the collation is a caseless collation, meaning case should be ingored when matching text. The default collation is 'i;ascii-casemap',
-     * which is considered a caseless collation. On the other hand, 'i;octet' is not caseless.
-     * 
-     * @return true if the collation is a caseless collation
-     */
-    public boolean isCaseless() {
-        return (collation == null || COLLATION_IASCII.equals(collation));
-    }
+	/**
+	 * Returns true if the collation is a caseless collation, meaning case should be
+	 * ingored when matching text. The default collation is 'i;ascii-casemap', which
+	 * is considered a caseless collation. On the other hand, 'i;octet' is not
+	 * caseless.
+	 * 
+	 * @return true if the collation is a caseless collation
+	 */
+	public boolean isCaseless() {
+		return (collation == null || COLLATION_IASCII.equals(collation));
+	}
 
-    /**
-     * Validates if collation is supported.
-     */
-    public void validate() {
-        if (collation != null && !CalendarUtils.isSupportedCollation(collation)) {
-            throw new UnsupportedCollationException();
-        }
-    }
+	/**
+	 * Validates if collation is supported.
+	 */
+	public void validate() {
+		if (collation != null && !CalendarUtils.isSupportedCollation(collation)) {
+			throw new UnsupportedCollationException();
+		}
+	}
 }

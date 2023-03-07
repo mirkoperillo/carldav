@@ -23,51 +23,51 @@ import static carldav.CarldavConstants.carddav;
 
 public class DavCardCollection extends DavCollectionBase {
 
-    private final CardQueryProcessor cardQueryProcessor;
+	private final CardQueryProcessor cardQueryProcessor;
 
-    public DavCardCollection(
-            CollectionItem collection,
-            DavResourceLocator locator,
-            DavResourceFactory factory,
-            CardQueryProcessor cardQueryProcessor) {
-        super(collection, locator, factory);
-        registerLiveProperty(SUPPORTED_ADDRESS_DATA);
-        registerLiveProperty(CURRENT_USER_PRINCIPAL);
+	public DavCardCollection(
+			CollectionItem collection,
+			DavResourceLocator locator,
+			DavResourceFactory factory,
+			CardQueryProcessor cardQueryProcessor) {
+		super(collection, locator, factory);
+		registerLiveProperty(SUPPORTED_ADDRESS_DATA);
+		registerLiveProperty(CURRENT_USER_PRINCIPAL);
 
-        this.cardQueryProcessor = cardQueryProcessor;
+		this.cardQueryProcessor = cardQueryProcessor;
 
-        reportTypes.add(AddressbookMultigetReport.REPORT_TYPE_CARDDAV_MULTIGET);
-        reportTypes.add(AddressbookQueryReport.REPORT_TYPE_CARDDAV_QUERY);
-    }
+		reportTypes.add(AddressbookMultigetReport.REPORT_TYPE_CARDDAV_MULTIGET);
+		reportTypes.add(AddressbookQueryReport.REPORT_TYPE_CARDDAV_QUERY);
+	}
 
-  @Override
-  public String getSupportedMethods() {
-    return "OPTIONS";
-  }
+	@Override
+	public String getSupportedMethods() {
+		return "OPTIONS";
+	}
 
-    @Override
-    protected Set<QName> getResourceTypes() {
-        final Set<QName> resourceTypes = super.getResourceTypes();
-        resourceTypes.add(carddav(ADDRESSBOOK));
-        return resourceTypes;
-    }
+	@Override
+	protected Set<QName> getResourceTypes() {
+		final Set<QName> resourceTypes = super.getResourceTypes();
+		resourceTypes.add(carddav(ADDRESSBOOK));
+		return resourceTypes;
+	}
 
-    public Set<DavItemResourceBase> findMembers(AddressbookFilter filter) {
-        Set<DavItemResourceBase> members = new HashSet<>();
+	public Set<DavItemResourceBase> findMembers(AddressbookFilter filter) {
+		Set<DavItemResourceBase> members = new HashSet<>();
 
-        CollectionItem collection = getItem();
-        for (Item memberItem : cardQueryProcessor.filterQuery(collection, filter)) {
-            WebDavResource resource = memberToResource(memberItem);
-            members.add((DavItemResourceBase) resource);
-        }
+		CollectionItem collection = getItem();
+		for (Item memberItem : cardQueryProcessor.filterQuery(collection, filter)) {
+			WebDavResource resource = memberToResource(memberItem);
+			members.add((DavItemResourceBase) resource);
+		}
 
-        return members;
-    }
+		return members;
+	}
 
-    @Override
-    protected void loadLiveProperties(final DavPropertySet properties) {
-        super.loadLiveProperties(properties);
-        properties.add(new SupportedAddressData());
-        properties.add(new CurrentUserPrincipal(getResourceLocator(), getUsername()));
-    }
+	@Override
+	protected void loadLiveProperties(final DavPropertySet properties) {
+		super.loadLiveProperties(properties);
+		properties.add(new SupportedAddressData());
+		properties.add(new CurrentUserPrincipal(getResourceLocator(), getUsername()));
+	}
 }

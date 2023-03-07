@@ -22,17 +22,17 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that the request is not allowed to be processed.
  */
 public class ForbiddenException extends CosmoDavException {
-    
-    public ForbiddenException(String message) {
-        super(403, message);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "forbidden");
-        if (getMessage() != null) {
-            writer.writeCharacters(getMessage());
-        }
-        writer.writeEndElement();
-    }
+	public ForbiddenException(String message) {
+		super(403, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "forbidden");
+		if (getMessage() != null) {
+			writer.writeCharacters(getMessage());
+		}
+		writer.writeEndElement();
+	}
 }

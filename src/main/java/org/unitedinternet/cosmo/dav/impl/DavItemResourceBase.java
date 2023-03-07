@@ -62,90 +62,92 @@ import static carldav.CarldavConstants.RESOURCE_TYPE;
  * <p>
  * This class does not define any resource types.
  * </p>
+ * 
  * @see Item
  */
 public abstract class DavItemResourceBase extends DavResourceBase implements WebDavResource {
 
-    private Item item;
-    private DavCollection parent;
+	private Item item;
+	private DavCollection parent;
 
-    public DavItemResourceBase(Item item, DavResourceLocator locator, DavResourceFactory factory) throws CosmoDavException {
-        super(locator, factory);
+	public DavItemResourceBase(Item item, DavResourceLocator locator, DavResourceFactory factory)
+			throws CosmoDavException {
+		super(locator, factory);
 
-        registerLiveProperty(GET_LAST_MODIFIED);
-        registerLiveProperty(GET_ETAG);
-        registerLiveProperty(DISPLAY_NAME);
-        registerLiveProperty(IS_COLLECTION);
-        registerLiveProperty(RESOURCE_TYPE);
-        registerLiveProperty(GET_CONTENT_LENGTH);
-        registerLiveProperty(GET_CONTENT_TYPE);
+		registerLiveProperty(GET_LAST_MODIFIED);
+		registerLiveProperty(GET_ETAG);
+		registerLiveProperty(DISPLAY_NAME);
+		registerLiveProperty(IS_COLLECTION);
+		registerLiveProperty(RESOURCE_TYPE);
+		registerLiveProperty(GET_CONTENT_LENGTH);
+		registerLiveProperty(GET_CONTENT_TYPE);
 
-        this.item = item;
-    }
+		this.item = item;
+	}
 
-    public boolean exists() {
-        return item != null && item.getId() != null;
-    }
+	public boolean exists() {
+		return item != null && item.getId() != null;
+	}
 
-    public String getDisplayName() {
-        return item.getDisplayName();
-    }
+	public String getDisplayName() {
+		return item.getDisplayName();
+	}
 
-    public String getETag() {
-        return ETagUtil.createETagEscaped(getItem().getId(), getItem().getModifiedDate());
-    }
+	public String getETag() {
+		return ETagUtil.createETagEscaped(getItem().getId(), getItem().getModifiedDate());
+	}
 
-    @Override
-    public String getName() {
-        return item.getName();
-    }
+	@Override
+	public String getName() {
+		return item.getName();
+	}
 
-    public long getModificationTime() {
-        if (getItem().getModifiedDate() == null)
-            return new Date().getTime();
-        return getItem().getModifiedDate().getTime();
-    }
+	public long getModificationTime() {
+		if (getItem().getModifiedDate() == null)
+			return new Date().getTime();
+		return getItem().getModifiedDate().getTime();
+	}
 
-    public DavCollection getParent() throws CosmoDavException {
-        if (parent == null) {
-            DavResourceLocator parentLocator = getResourceLocator().getParentLocator();
-            parent = (DavCollection) getResourceFactory().resolve(parentLocator);
-        }
-        return parent;
-    }
+	public DavCollection getParent() throws CosmoDavException {
+		if (parent == null) {
+			DavResourceLocator parentLocator = getResourceLocator().getParentLocator();
+			parent = (DavCollection) getResourceFactory().resolve(parentLocator);
+		}
+		return parent;
+	}
 
-    public Item getItem() {
-        return item;
-    }
+	public Item getItem() {
+		return item;
+	}
 
-    public void setItem(Item item) throws CosmoDavException {
-        this.item = item;
-        loadProperties();
-    }
+	public void setItem(Item item) throws CosmoDavException {
+		this.item = item;
+		loadProperties();
+	}
 
-    protected CalendarQueryProcessor getCalendarQueryProcesor() {
-        return getResourceFactory().getCalendarQueryProcessor();
-    }
+	protected CalendarQueryProcessor getCalendarQueryProcesor() {
+		return getResourceFactory().getCalendarQueryProcessor();
+	}
 
-    protected void populateItem(DavInputContext inputContext) throws CosmoDavException {
-        if (item.getId() == null) {
-            try {
-                item.setName(UrlEncoding.decode(PathUtil.getBasename(getResourcePath()), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new CosmoDavException(e);
-            }
-        }
+	protected void populateItem(DavInputContext inputContext) throws CosmoDavException {
+		if (item.getId() == null) {
+			try {
+				item.setName(UrlEncoding.decode(PathUtil.getBasename(getResourcePath()), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				throw new CosmoDavException(e);
+			}
+		}
 
-        Item hibICalendarItem = item;
-        hibICalendarItem.setClientCreationDate(Calendar.getInstance().getTime());
-        hibICalendarItem.setClientModifiedDate(hibICalendarItem.getClientCreationDate());
-    }
+		Item hibICalendarItem = item;
+		hibICalendarItem.setClientCreationDate(Calendar.getInstance().getTime());
+		hibICalendarItem.setClientModifiedDate(hibICalendarItem.getClientCreationDate());
+	}
 
-    protected void loadLiveProperties(DavPropertySet properties) {
-        properties.add(new LastModified(item.getModifiedDate()));
-        properties.add(new Etag(getETag()));
-        properties.add(new DisplayName(getDisplayName()));
-        properties.add(new ResourceType(getResourceTypes()));
-        properties.add(new IsCollection(isCollection()));
-    }
+	protected void loadLiveProperties(DavPropertySet properties) {
+		properties.add(new LastModified(item.getModifiedDate()));
+		properties.add(new Etag(getETag()));
+		properties.add(new DisplayName(getDisplayName()));
+		properties.add(new ResourceType(getResourceTypes()));
+		properties.add(new IsCollection(isCollection()));
+	}
 }

@@ -22,15 +22,15 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that a dav resource was not found.
  */
 public class UnsupportedMediaTypeException extends CosmoDavException {
-    
-    public UnsupportedMediaTypeException(String message) {
-        super(415, message);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "unsupported-media-type");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	public UnsupportedMediaTypeException(String message) {
+		super(415, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "unsupported-media-type");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

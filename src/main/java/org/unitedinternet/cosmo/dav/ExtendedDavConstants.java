@@ -24,12 +24,12 @@ import org.unitedinternet.cosmo.util.UriTemplate;
  */
 public interface ExtendedDavConstants extends DavConstants {
 
-    String PRE_COSMO = "cosmo";
-    String NS_COSMO = "http://osafoundation.org/cosmo/DAV";
-    String ADDRESSBOOK = "addressbook";
+	String PRE_COSMO = "cosmo";
+	String NS_COSMO = "http://osafoundation.org/cosmo/DAV";
+	String ADDRESSBOOK = "addressbook";
 
-    UriTemplate TEMPLATE_HOME = new UriTemplate("/" + ServerConstants.SVC_DAV + "/{username}/*");
-    UriTemplate CARD_HOME = new UriTemplate("/{username}/contacts");
-    UriTemplate TEMPLATE_USER = new UriTemplate("/principals/users/{username}/*");
-    UriTemplate TEMPLATE_PRINCIPALS = new UriTemplate("/principals");
+	UriTemplate TEMPLATE_HOME = new UriTemplate("/" + ServerConstants.SVC_DAV + "/{username}/*");
+	UriTemplate CARD_HOME = new UriTemplate("/{username}/contacts");
+	UriTemplate TEMPLATE_USER = new UriTemplate("/principals/users/{username}/*");
+	UriTemplate TEMPLATE_PRINCIPALS = new UriTemplate("/principals");
 }

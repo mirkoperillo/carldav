@@ -25,62 +25,63 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 public class XmlMatcher {
 
-    private XmlMatcher() {
-        //private
-    }
+	private XmlMatcher() {
+		// private
+	}
 
-    public static CompareMatcher equalXml(String content) {
-        var build = Input.fromString(content).build();
-        return isSimilarTo(build).ignoreWhitespace().normalizeWhitespace().withNodeMatcher(nodeMatcher());
-    }
+	public static CompareMatcher equalXml(String content) {
+		var build = Input.fromString(content).build();
+		return isSimilarTo(build).ignoreWhitespace().normalizeWhitespace().withNodeMatcher(nodeMatcher());
+	}
 
-  public static Matcher<Source> toContainText(String xpath, Map<String, String> namespaces, String expected) {
-    return new CustomMatcher<>("to contain '" + expected + "'") {
-      @Override
-      public void describeMismatch(Object item, Description description) {
-        try {
-          var writer = new StringWriter();
-          var result = new StreamResult(writer);
-          var factory = TransformerFactory.newInstance();
-          var transformer = factory.newTransformer();
-          transformer.transform((Source) item, result);
-          super.describeMismatch(writer.toString(), description);
-        } catch (TransformerException exception) {
-          throw new RuntimeException(exception);
-        }
-      }
+	public static Matcher<Source> toContainText(String xpath, Map<String, String> namespaces, String expected) {
+		return new CustomMatcher<>("to contain '" + expected + "'") {
+			@Override
+			public void describeMismatch(Object item, Description description) {
+				try {
+					var writer = new StringWriter();
+					var result = new StreamResult(writer);
+					var factory = TransformerFactory.newInstance();
+					var transformer = factory.newTransformer();
+					transformer.transform((Source) item, result);
+					super.describeMismatch(writer.toString(), description);
+				} catch (TransformerException exception) {
+					throw new RuntimeException(exception);
+				}
+			}
 
-      @Override
-      public boolean matches(Object source) {
-        var engine = new JAXPXPathEngine();
-        engine.setNamespaceContext(namespaces);
-        var result = engine.evaluate(xpath, (Source) source);
-        return result.contains(expected);
-      }
-    };
-  }
+			@Override
+			public boolean matches(Object source) {
+				var engine = new JAXPXPathEngine();
+				engine.setNamespaceContext(namespaces);
+				var result = engine.evaluate(xpath, (Source) source);
+				return result.contains(expected);
+			}
+		};
+	}
 
-    private static DefaultNodeMatcher nodeMatcher() {
-        return new DefaultNodeMatcher(unorderedSupportedReportNodes(), unorderedPrivilegeNodes(), unorderedSupportedCalendarComponentSet(), unorderedPropstatNodes(), byNameAndAllAttributes);
-    }
+	private static DefaultNodeMatcher nodeMatcher() {
+		return new DefaultNodeMatcher(unorderedSupportedReportNodes(), unorderedPrivilegeNodes(),
+				unorderedSupportedCalendarComponentSet(), unorderedPropstatNodes(), byNameAndAllAttributes);
+	}
 
-    private static ElementSelector unorderedSupportedReportNodes() {
-        return selectorForElementNamed("supported-report", new FirstChildElementNameSelector());
-    }
+	private static ElementSelector unorderedSupportedReportNodes() {
+		return selectorForElementNamed("supported-report", new FirstChildElementNameSelector());
+	}
 
-    private static ElementSelector unorderedPropstatNodes() {
-        return selectorForElementNamed("propstat", new FirstChildElementNameSelector());
-    }
+	private static ElementSelector unorderedPropstatNodes() {
+		return selectorForElementNamed("propstat", new FirstChildElementNameSelector());
+	}
 
-    private static ElementSelector unorderedPrivilegeNodes() {
-        return unorderedNodes("privilege");
-    }
+	private static ElementSelector unorderedPrivilegeNodes() {
+		return unorderedNodes("privilege");
+	}
 
-    private static ElementSelector unorderedSupportedCalendarComponentSet() {
-        return unorderedNodes("supported-calendar-component-set");
-    }
+	private static ElementSelector unorderedSupportedCalendarComponentSet() {
+		return unorderedNodes("supported-calendar-component-set");
+	}
 
-    private static ElementSelector unorderedNodes(final String localName) {
-        return selectorForElementNamed(localName, byXPath("./*[1]", byNameAndAllAttributes));
-    }
+	private static ElementSelector unorderedNodes(final String localName) {
+		return selectorForElementNamed(localName, byXPath("./*[1]", byNameAndAllAttributes));
+	}
 }

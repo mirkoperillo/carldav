@@ -21,24 +21,25 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * An exception indicating that a calendar resource contains missing or
- * invalid calendar data.
+ * An exception indicating that a calendar resource contains missing or invalid
+ * calendar data.
  */
 public class InvalidCalendarDataException extends BadRequestException implements CaldavConstants {
-    
-    /**
-     * Constructor.
-     * @param message The exception message.
-     */
-    public InvalidCalendarDataException(String message) {
-        super(message);
-        getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_CALDAV, "valid-calendar-data");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param message The exception message.
+	 */
+	public InvalidCalendarDataException(String message) {
+		super(message);
+		getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_CALDAV, "valid-calendar-data");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

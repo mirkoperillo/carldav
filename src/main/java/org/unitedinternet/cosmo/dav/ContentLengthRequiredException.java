@@ -20,12 +20,12 @@ package org.unitedinternet.cosmo.dav;
  * length of its entity body.
  */
 public class ContentLengthRequiredException extends CosmoDavException {
-    
-    public ContentLengthRequiredException() {
-        super(415);
-    }
 
-    public boolean hasContent() {
-        return false;
-    }
+	public ContentLengthRequiredException() {
+		super(415);
+	}
+
+	public boolean hasContent() {
+		return false;
+	}
 }

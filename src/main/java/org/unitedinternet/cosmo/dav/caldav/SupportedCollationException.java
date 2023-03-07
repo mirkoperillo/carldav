@@ -23,29 +23,29 @@ import org.unitedinternet.cosmo.dav.PreconditionFailedException;
 import org.unitedinternet.cosmo.icalendar.ICalendarConstants;
 
 /**
- * An exception indicating that an unsuppported collation 
- * was specified.
+ * An exception indicating that an unsuppported collation was specified.
  */
 public class SupportedCollationException
-    extends PreconditionFailedException
-    implements ICalendarConstants, CaldavConstants {
-    
-    private static String[] SUPPORTED_COLLATIONS = {
-        "i;ascii-casemap", "i;octet"
-    };
-    /**
-     * Constructor.
-     */
-    public SupportedCollationException() {
-        super("Collation must be one of " +
-              StringUtils.join(SUPPORTED_COLLATIONS, ", "));
-        getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
-    }
+		extends PreconditionFailedException
+		implements ICalendarConstants, CaldavConstants {
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_CALDAV, "supported-collation");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	private static String[] SUPPORTED_COLLATIONS = {
+			"i;ascii-casemap", "i;octet"
+	};
+
+	/**
+	 * Constructor.
+	 */
+	public SupportedCollationException() {
+		super("Collation must be one of " +
+				StringUtils.join(SUPPORTED_COLLATIONS, ", "));
+		getNamespaceContext().addNamespace(PRE_CALDAV, NS_CALDAV);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_CALDAV, "supported-collation");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

@@ -16,12 +16,10 @@
 package org.unitedinternet.cosmo.calendar.query;
 
 /**
- * RuntimeExceptoin that indicates that an unsupported collation
- * was specified.
+ * RuntimeExceptoin that indicates that an unsupported collation was specified.
  */
 public class UnsupportedCollationException extends RuntimeException {
 
-
-    static final long serialVersionUID = -7034897190745766931L;
+	static final long serialVersionUID = -7034897190745766931L;
 
 }

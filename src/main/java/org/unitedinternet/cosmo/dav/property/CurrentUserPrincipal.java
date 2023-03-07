@@ -10,27 +10,27 @@ import static carldav.CarldavConstants.caldav;
 
 public class CurrentUserPrincipal extends StandardDavProperty<String> {
 
-    public CurrentUserPrincipal(DavResourceLocator locator, String userId) {
-        super(CURRENT_USER_PRINCIPAL, href(locator, userId));
-    }
+	public CurrentUserPrincipal(DavResourceLocator locator, String userId) {
+		super(CURRENT_USER_PRINCIPAL, href(locator, userId));
+	}
 
-    public String getHref() {
-        return getValue();
-    }
+	public String getHref() {
+		return getValue();
+	}
 
-    private static String href(DavResourceLocator locator, String userId) {
-        return TEMPLATE_USER.bindAbsolute(locator.getBaseHref(), userId);
-    }
+	private static String href(DavResourceLocator locator, String userId) {
+		return TEMPLATE_USER.bindAbsolute(locator.getBaseHref(), userId);
+	}
 
-    @Override
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	@Override
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        Element href = DomUtils.createElement(document, XML_HREF, caldav("href"));
-        DomUtils.setText(href, getHref());
-        name.appendChild(href);
+		Element href = DomUtils.createElement(document, XML_HREF, caldav("href"));
+		DomUtils.setText(href, getHref());
+		name.appendChild(href);
 
-        return name;
-    }
+		return name;
+	}
 
 }

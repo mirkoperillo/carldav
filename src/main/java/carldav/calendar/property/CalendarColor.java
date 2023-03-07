@@ -6,7 +6,7 @@ import static carldav.CarldavConstants.CALENDAR_COLOR;
 
 public class CalendarColor extends StandardDavProperty<String> {
 
-    public CalendarColor(String color) {
-        super(CALENDAR_COLOR, color);
-    }
+	public CalendarColor(String color) {
+		super(CALENDAR_COLOR, color);
+	}
 }

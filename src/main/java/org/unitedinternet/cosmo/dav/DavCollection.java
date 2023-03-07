@@ -24,19 +24,19 @@ import java.util.List;
  */
 public interface DavCollection extends WebDavResource {
 
-    /**
-     * Adds a new content item to this resource.
-     */
-    void addContent(WebDavResource content,
-                    DavInputContext input)
-        throws CosmoDavException;
+	/**
+	 * Adds a new content item to this resource.
+	 */
+	void addContent(WebDavResource content,
+			DavInputContext input)
+			throws CosmoDavException;
 
-    /**
-     * Returns the member resource at the given absolute href.
-     */
-    WebDavResource findMember(String href)
-        throws CosmoDavException;
+	/**
+	 * Returns the member resource at the given absolute href.
+	 */
+	WebDavResource findMember(String href)
+			throws CosmoDavException;
 
-    List<WebDavResource> getCollectionMembers();
-    
+	List<WebDavResource> getCollectionMembers();
+
 }

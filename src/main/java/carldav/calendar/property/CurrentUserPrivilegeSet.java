@@ -16,23 +16,23 @@ import static carldav.CarldavConstants.PROPERTY_ACL_CURRENT_USER_PRIVILEGE_SET;
 
 public class CurrentUserPrivilegeSet extends StandardDavProperty<List<QName>> {
 
-    public CurrentUserPrivilegeSet() {
-        super(PROPERTY_ACL_CURRENT_USER_PRIVILEGE_SET, Arrays.asList(DAV_READ, DAV_WRITE));
-    }
+	public CurrentUserPrivilegeSet() {
+		super(PROPERTY_ACL_CURRENT_USER_PRIVILEGE_SET, Arrays.asList(DAV_READ, DAV_WRITE));
+	}
 
-    public Element toXml(Document document) {
-        Element element = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element element = getName().toXml(document);
 
-        getValue().stream()
-                .map(qname -> toXml(document, qname))
-                .forEach(element::appendChild);
+		getValue().stream()
+				.map(qname -> toXml(document, qname))
+				.forEach(element::appendChild);
 
-        return element;
-    }
+		return element;
+	}
 
-    private Element toXml(Document document, QName privilegeQName) {
-        Element element = DomUtils.createElement(document, DAV_PRIVILEGE.getLocalPart(), DAV_PRIVILEGE);
-        element.appendChild(DomUtils.createElement(document, privilegeQName.getLocalPart(), privilegeQName));
-        return element;
-    }
+	private Element toXml(Document document, QName privilegeQName) {
+		Element element = DomUtils.createElement(document, DAV_PRIVILEGE.getLocalPart(), DAV_PRIVILEGE);
+		element.appendChild(DomUtils.createElement(document, privilegeQName.getLocalPart(), privilegeQName));
+		return element;
+	}
 }

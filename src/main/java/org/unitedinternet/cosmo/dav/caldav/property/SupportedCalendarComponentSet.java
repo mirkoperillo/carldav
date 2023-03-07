@@ -32,43 +32,43 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SupportedCalendarComponentSet extends StandardDavProperty implements CaldavConstants, ICalendarConstants {
-    private static String[] SUPPORTED_COMPONENT_TYPES = { Component.VEVENT, Component.VTODO, Component.VJOURNAL };
+	private static String[] SUPPORTED_COMPONENT_TYPES = { Component.VEVENT, Component.VTODO, Component.VJOURNAL };
 
-    public SupportedCalendarComponentSet() {
-        this(SUPPORTED_COMPONENT_TYPES);
-    }
+	public SupportedCalendarComponentSet() {
+		this(SUPPORTED_COMPONENT_TYPES);
+	}
 
-    public SupportedCalendarComponentSet(String[] componentTypes) {
-        super(SUPPORTED_CALENDAR_COMPONENT_SET, componentTypes(componentTypes));
-        for (String type : componentTypes) {
-            if (!CalendarUtils.isSupportedComponent(type)) {
-                throw new IllegalArgumentException("Invalid component type '" + type + "'.");
-            }
-        }
-    }
+	public SupportedCalendarComponentSet(String[] componentTypes) {
+		super(SUPPORTED_CALENDAR_COMPONENT_SET, componentTypes(componentTypes));
+		for (String type : componentTypes) {
+			if (!CalendarUtils.isSupportedComponent(type)) {
+				throw new IllegalArgumentException("Invalid component type '" + type + "'.");
+			}
+		}
+	}
 
-    private static HashSet<String> componentTypes(String[] types) {
-        HashSet<String> typesSet = new HashSet<>();
+	private static HashSet<String> componentTypes(String[] types) {
+		HashSet<String> typesSet = new HashSet<>();
 
-        for (String t : types) {
-            typesSet.add(t);
-        }
-        return typesSet;
-    }
+		for (String t : types) {
+			typesSet.add(t);
+		}
+		return typesSet;
+	}
 
-    public Set<String> getComponentTypes() {
-        return (Set<String>) getValue();
-    }
+	public Set<String> getComponentTypes() {
+		return (Set<String>) getValue();
+	}
 
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        for (String type : getComponentTypes()) {
-            Element e = DomUtils.createElement(document, ELEMENT_CALDAV_COMP, c(ELEMENT_CALDAV_COMP));
-            DomUtils.setAttribute(e, ATTR_CALDAV_NAME, EMPTY, type);
-            name.appendChild(e);
-        }
+		for (String type : getComponentTypes()) {
+			Element e = DomUtils.createElement(document, ELEMENT_CALDAV_COMP, c(ELEMENT_CALDAV_COMP));
+			DomUtils.setAttribute(e, ATTR_CALDAV_NAME, EMPTY, type);
+			name.appendChild(e);
+		}
 
-        return name;
-    }
+		return name;
+	}
 }

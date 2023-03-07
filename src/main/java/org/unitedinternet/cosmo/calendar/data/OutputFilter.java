@@ -55,606 +55,602 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * This is a filter object that allows filtering a {@link Calendar} by
- * component type or property. It follows the model defined by the
- * CalDAV <calendar-data> XML element including support of the
- * no-value attribute. When no-value is used, a property is written
- * out up to the ':' in the stream, and then no more (i.e. the value
- * is skipped).
+ * This is a filter object that allows filtering a {@link Calendar} by component
+ * type or property. It follows the model defined by the CalDAV <calendar-data>
+ * XML element including support of the no-value attribute. When no-value is
+ * used, a property is written out up to the ':' in the stream, and then no more
+ * (i.e. the value is skipped).
  *
  * Heavily based on code written by Cyrus Daboo.
  */
 public class OutputFilter {
 
-    private String componentName;
-    private boolean allSubComponents;
-    private HashMap<String, OutputFilter> subComponents;
-    private boolean allProperties;
-    private HashMap<String, Object> properties;
-    private Period expand;
-    private Period limit;
+	private String componentName;
+	private boolean allSubComponents;
+	private HashMap<String, OutputFilter> subComponents;
+	private boolean allProperties;
+	private HashMap<String, Object> properties;
+	private Period expand;
+	private Period limit;
 
-    /**
-     * Constructor.
-     * @param name The name.
-     */
-    public OutputFilter(String name) {
-        componentName = name;
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param name The name.
+	 */
+	public OutputFilter(String name) {
+		componentName = name;
+	}
 
-    /**
-     * Filter.
-     * @param calendar The calendar.
-     * @param buffer The string buffer.
-     */
-    public void filter(Calendar calendar, final StringBuffer buffer) {
-        // If expansion of recurrence is required what we have to do
-        // is create a whole new calendar object with the new expanded
-        // components in it and then write that one out.
-        if (getExpand() != null) {
-            calendar = createExpanded(calendar);
-        }
+	/**
+	 * Filter.
+	 * 
+	 * @param calendar The calendar.
+	 * @param buffer   The string buffer.
+	 */
+	public void filter(Calendar calendar, final StringBuffer buffer) {
+		// If expansion of recurrence is required what we have to do
+		// is create a whole new calendar object with the new expanded
+		// components in it and then write that one out.
+		if (getExpand() != null) {
+			calendar = createExpanded(calendar);
+		}
 
-        // If limit of recurrence set is required, we have to remove those
-        // overriden components in recurring components that do not
-        // overlap the given time period.  Create a new calendar in order
-        // to preserve the original.
-        else if (getLimit() != null) {
-            calendar = createLimitedRecurrence(calendar);
-        }
+		// If limit of recurrence set is required, we have to remove those
+		// overriden components in recurring components that do not
+		// overlap the given time period. Create a new calendar in order
+		// to preserve the original.
+		else if (getLimit() != null) {
+			calendar = createLimitedRecurrence(calendar);
+		}
 
-        buffer.append(Calendar.BEGIN).
-            append(':').
-            append(Calendar.VCALENDAR).
-            append("\n");
+		buffer.append(Calendar.BEGIN).append(':').append(Calendar.VCALENDAR).append("\n");
 
-        filterProperties(calendar.getProperties(), buffer);
-        filterSubComponents(calendar.getComponents(), buffer);
+		filterProperties(calendar.getProperties(), buffer);
+		filterSubComponents(calendar.getComponents(), buffer);
 
-        buffer.append(Calendar.END).
-            append(':').
-            append(Calendar.VCALENDAR).
-            append("\n");
-    }
+		buffer.append(Calendar.END).append(':').append(Calendar.VCALENDAR).append("\n");
+	}
 
-    /**
-     * Creates limited recurrence.
-     * @param calendar The calendar.
-     * @return The calendar.
-     */
-    private Calendar createLimitedRecurrence(Calendar calendar) {
-        // Create a new calendar with the same top-level properties as current
-        Calendar newCal = new Calendar();
-        newCal.getProperties().addAll(calendar.getProperties());
-       
-        InstanceList instances = new InstanceList();
-        ComponentList overrides = new ComponentList();
-        
-        // Limit range
-        Period period = getLimit();
-        
-        // Filter override components based on limit range
-        for (Object comp: calendar.getComponents()) {
-            // Only care about VEVENT, VJOURNAL, VTODO
-            if ((comp instanceof VEvent) ||
-                (comp instanceof VJournal) ||
-                (comp instanceof VToDo)) {
-                // Add master component to result Calendar
-                if (((CalendarComponent)comp).getProperties().
-                    getProperty(Property.RECURRENCE_ID) == null) {
-                    newCal.getComponents().add(comp);
-                    // seed the InstanceList with master component
-                    instances.addComponent((CalendarComponent)comp, period.getStart(),
-                                           period.getEnd());
-                }
-                // Keep track of overrides, we'll process later
-                else {
-                    overrides.add(comp);
-                }
-            } else {
-                newCal.getComponents().add(comp);
-            }
-        }
-        
-        // Add override components to InstanceList.
-        // Only add override if it changes anything about the InstanceList.
-        for (Object comp : overrides) {
-            if (comp instanceof CalendarComponent && instances.addOverride((CalendarComponent)comp, period.getStart(), period.getEnd())) {
-                newCal.getComponents().add(comp);
-            }
-        }
-        
-        return newCal;
-    }
-    
-    /**
-     * Creates expanded.
-     * @param calendar The calendar.
-     * @return The calendar.
-     */
-    private Calendar createExpanded(Calendar calendar) {
-        // Create a new calendar with the same top-level properties as this one
-        Calendar newCal = new Calendar();
-        newCal.getProperties().addAll(calendar.getProperties());
+	/**
+	 * Creates limited recurrence.
+	 * 
+	 * @param calendar The calendar.
+	 * @return The calendar.
+	 */
+	private Calendar createLimitedRecurrence(Calendar calendar) {
+		// Create a new calendar with the same top-level properties as current
+		Calendar newCal = new Calendar();
+		newCal.getProperties().addAll(calendar.getProperties());
 
-        // Now look at each component and determine whether expansion is
-        // required
-        InstanceList instances = new InstanceList();
-        ComponentList overrides = new ComponentList();
-        Component master = null;
-        for (Object comp :calendar.getComponents()) {
-            if ((comp instanceof VEvent) ||
-                (comp instanceof VJournal) ||
-                (comp instanceof VToDo)) {
-                // See if this is the master instance
-                if (((CalendarComponent)comp).getProperties().
-                    getProperty(Property.RECURRENCE_ID) == null) {
-                    master = (CalendarComponent)comp;
-                    instances.addComponent(master, getExpand().getStart(),
-                                           getExpand().getEnd());
-                } else {
-                    overrides.add(comp);
-                }
-            } else if (!(comp instanceof VTimeZone))  {
-                // Create new component and convert properties to UTC
-                try {
-                    Object newcomp = ((CalendarComponent)(comp)).copy();
-                    componentToUTC((CalendarComponent)newcomp);
-                    newCal.getComponents().add(newcomp);
-                } catch (Exception e) {
-                    throw new CosmoException("Error copying component", e);
-                }
-            }
-        }
+		InstanceList instances = new InstanceList();
+		ComponentList overrides = new ComponentList();
 
-        for (Object comp : overrides) {
-            instances.addComponent((CalendarComponent)comp, getExpand().getStart(), getExpand().getEnd());
-        }
+		// Limit range
+		Period period = getLimit();
 
-        // Create a copy of the master with recurrence properties removed
-        boolean isRecurring = false;
-        Component masterCopy = null;
-        try {
-            masterCopy = master.copy();
-        } catch (Exception e) {
-            throw new CosmoException("Error copying master component", e);
-        }
-        Iterator<Property> i = (Iterator<Property>)
-            masterCopy.getProperties().iterator();
-        while (i.hasNext()) {
-            Property prop = i.next();
-            if ((prop instanceof RRule) ||
-                (prop instanceof RDate) ||
-                (prop instanceof ExRule) ||
-                (prop instanceof ExDate)) {
-                i.remove();
-                isRecurring = true;
-            }
-        }
+		// Filter override components based on limit range
+		for (Object comp : calendar.getComponents()) {
+			// Only care about VEVENT, VJOURNAL, VTODO
+			if ((comp instanceof VEvent) ||
+					(comp instanceof VJournal) ||
+					(comp instanceof VToDo)) {
+				// Add master component to result Calendar
+				if (((CalendarComponent) comp).getProperties().getProperty(Property.RECURRENCE_ID) == null) {
+					newCal.getComponents().add(comp);
+					// seed the InstanceList with master component
+					instances.addComponent((CalendarComponent) comp, period.getStart(),
+							period.getEnd());
+				}
+				// Keep track of overrides, we'll process later
+				else {
+					overrides.add(comp);
+				}
+			} else {
+				newCal.getComponents().add(comp);
+			}
+		}
 
-        // Expand each instance within the requested range
-        TreeSet<String> sortedKeys = new TreeSet<String>(instances.keySet());
-        for (String ikey : sortedKeys) {
-            Instance instance = (Instance) instances.get(ikey);
+		// Add override components to InstanceList.
+		// Only add override if it changes anything about the InstanceList.
+		for (Object comp : overrides) {
+			if (comp instanceof CalendarComponent
+					&& instances.addOverride((CalendarComponent) comp, period.getStart(), period.getEnd())) {
+				newCal.getComponents().add(comp);
+			}
+		}
 
-            // Make sure this instance is within the requested range
-            // FIXME: Need to handle floating date/times.  Right now
-            // floating times will use the server timezone.
-            if ((getExpand().getStart().compareTo(instance.getEnd()) >= 0) ||
-                (getExpand().getEnd().compareTo(instance.getStart()) <= 0)) {
-                continue;
-            }
-            
-            // Create appropriate copy
-            Component copy = null;
-            try {
-                copy = instance.getComp() == master ?
-                    masterCopy.copy() :
-                    instance.getComp().copy();
-                componentToUTC(copy);
-            } catch (URISyntaxException | ParseException | IOException e) {
-                throw new CosmoException("Error copying component", e);
-            }
+		return newCal;
+	}
 
-            // Adjust the copy to match the actual instance info
-            if (isRecurring) {
-                // Add RECURRENCE-ID, replacing existing if present
-                RecurrenceId rid = (RecurrenceId) copy.getProperties()
-                    .getProperty(Property.RECURRENCE_ID);
-                if (rid != null) {
-                    copy.getProperties().remove(rid);
-                }
-                rid = new RecurrenceId(instance.getRid());
-                copy.getProperties().add(rid);
+	/**
+	 * Creates expanded.
+	 * 
+	 * @param calendar The calendar.
+	 * @return The calendar.
+	 */
+	private Calendar createExpanded(Calendar calendar) {
+		// Create a new calendar with the same top-level properties as this one
+		Calendar newCal = new Calendar();
+		newCal.getProperties().addAll(calendar.getProperties());
 
-                // Adjust DTSTART (in UTC)
-                DtStart olddtstart = (DtStart)
-                    copy.getProperties().getProperty(Property.DTSTART);
-                if (olddtstart != null) {
-                    copy.getProperties().remove(olddtstart);
-                }
-                DtStart newdtstart = new DtStart(instance.getStart());
-                Date newdtstartDate = newdtstart.getDate(); 
-                if ( newdtstartDate instanceof DateTime &&
-                    (((DateTime)newdtstartDate).getTimeZone() != null)) {
-                    newdtstart.setUtc(true);
-                }
-                copy.getProperties().add(newdtstart);
+		// Now look at each component and determine whether expansion is
+		// required
+		InstanceList instances = new InstanceList();
+		ComponentList overrides = new ComponentList();
+		Component master = null;
+		for (Object comp : calendar.getComponents()) {
+			if ((comp instanceof VEvent) ||
+					(comp instanceof VJournal) ||
+					(comp instanceof VToDo)) {
+				// See if this is the master instance
+				if (((CalendarComponent) comp).getProperties().getProperty(Property.RECURRENCE_ID) == null) {
+					master = (CalendarComponent) comp;
+					instances.addComponent(master, getExpand().getStart(),
+							getExpand().getEnd());
+				} else {
+					overrides.add(comp);
+				}
+			} else if (!(comp instanceof VTimeZone)) {
+				// Create new component and convert properties to UTC
+				try {
+					Object newcomp = ((CalendarComponent) (comp)).copy();
+					componentToUTC((CalendarComponent) newcomp);
+					newCal.getComponents().add(newcomp);
+				} catch (Exception e) {
+					throw new CosmoException("Error copying component", e);
+				}
+			}
+		}
 
-                // If DTEND present, replace it (in UTC)
-                DtEnd olddtend = (DtEnd)
-                    copy.getProperties().getProperty(Property.DTEND);
-                if (olddtend != null) {
-                    copy.getProperties().remove(olddtend);
-                    DtEnd newdtend = new DtEnd(instance.getEnd());
-                    Date newdtwenddate = newdtend.getDate(); 
-                    if (newdtwenddate instanceof DateTime &&
-                        (((DateTime)newdtwenddate).getTimeZone() != null)) {
-                        newdtend.setUtc(true);
-                    }
-                    copy.getProperties().add(newdtend);
-                }
-            }
+		for (Object comp : overrides) {
+			instances.addComponent((CalendarComponent) comp, getExpand().getStart(), getExpand().getEnd());
+		}
 
-            // Now have a valid expanded instance so add it
-            newCal.getComponents().add((CalendarComponent)copy);
-        }
+		// Create a copy of the master with recurrence properties removed
+		boolean isRecurring = false;
+		Component masterCopy = null;
+		try {
+			masterCopy = master.copy();
+		} catch (Exception e) {
+			throw new CosmoException("Error copying master component", e);
+		}
+		Iterator<Property> i = (Iterator<Property>) masterCopy.getProperties().iterator();
+		while (i.hasNext()) {
+			Property prop = i.next();
+			if ((prop instanceof RRule) ||
+					(prop instanceof RDate) ||
+					(prop instanceof ExRule) ||
+					(prop instanceof ExDate)) {
+				i.remove();
+				isRecurring = true;
+			}
+		}
 
-        return newCal;
-    }
+		// Expand each instance within the requested range
+		TreeSet<String> sortedKeys = new TreeSet<String>(instances.keySet());
+		for (String ikey : sortedKeys) {
+			Instance instance = (Instance) instances.get(ikey);
 
-    /**
-     * @param comp The component.
-     */
-    private void componentToUTC(Component comp) {
-        // Do to each top-level property
-        for (Property prop : (List<Property>) comp.getProperties()) {
-            if (prop instanceof DateProperty) {
-                DateProperty dprop = (DateProperty) prop;
-                Date date = dprop.getDate();
-                if (date instanceof DateTime &&
-                    (((DateTime) date).getTimeZone() != null)) {
-                    dprop.setUtc(true);
-                }
-            }
-        }
+			// Make sure this instance is within the requested range
+			// FIXME: Need to handle floating date/times. Right now
+			// floating times will use the server timezone.
+			if ((getExpand().getStart().compareTo(instance.getEnd()) >= 0) ||
+					(getExpand().getEnd().compareTo(instance.getStart()) <= 0)) {
+				continue;
+			}
 
-        // Do to each embedded component
-        ComponentList subcomps = null;
-        if (comp instanceof VEvent) {
-            subcomps = ((VEvent)comp).getAlarms();
-        }
-        else if (comp instanceof VToDo) {
-            subcomps = ((VToDo)comp).getAlarms();
-        }
+			// Create appropriate copy
+			Component copy = null;
+			try {
+				copy = instance.getComp() == master ? masterCopy.copy() : instance.getComp().copy();
+				componentToUTC(copy);
+			} catch (URISyntaxException | ParseException | IOException e) {
+				throw new CosmoException("Error copying component", e);
+			}
 
-        if (subcomps != null) {
-            for (Component subcomp : (List<Component>) subcomps) {
-                componentToUTC(subcomp);
-            }
-        }
-    }
+			// Adjust the copy to match the actual instance info
+			if (isRecurring) {
+				// Add RECURRENCE-ID, replacing existing if present
+				RecurrenceId rid = (RecurrenceId) copy.getProperties()
+						.getProperty(Property.RECURRENCE_ID);
+				if (rid != null) {
+					copy.getProperties().remove(rid);
+				}
+				rid = new RecurrenceId(instance.getRid());
+				copy.getProperties().add(rid);
 
-    private void filterProperties(PropertyList properties,
-                                  StringBuffer buffer) {
-        if (isAllProperties()) {
-            buffer.append(properties.toString());
-            return;
-        }
+				// Adjust DTSTART (in UTC)
+				DtStart olddtstart = (DtStart) copy.getProperties().getProperty(Property.DTSTART);
+				if (olddtstart != null) {
+					copy.getProperties().remove(olddtstart);
+				}
+				DtStart newdtstart = new DtStart(instance.getStart());
+				Date newdtstartDate = newdtstart.getDate();
+				if (newdtstartDate instanceof DateTime &&
+						(((DateTime) newdtstartDate).getTimeZone() != null)) {
+					newdtstart.setUtc(true);
+				}
+				copy.getProperties().add(newdtstart);
 
-        if (! hasPropertyFilters()) {
-            return;
-        }
+				// If DTEND present, replace it (in UTC)
+				DtEnd olddtend = (DtEnd) copy.getProperties().getProperty(Property.DTEND);
+				if (olddtend != null) {
+					copy.getProperties().remove(olddtend);
+					DtEnd newdtend = new DtEnd(instance.getEnd());
+					Date newdtwenddate = newdtend.getDate();
+					if (newdtwenddate instanceof DateTime &&
+							(((DateTime) newdtwenddate).getTimeZone() != null)) {
+						newdtend.setUtc(true);
+					}
+					copy.getProperties().add(newdtend);
+				}
+			}
 
-        for (Property property : (List<Property>) properties) {
-            PropertyMatch pm = testPropertyValue(property.getName());
-            if (pm.isMatch()) {
-                if (pm.isValueExcluded()) {
-                    chompPropertyValue(property, buffer);
-                }
-                else {
-                    buffer.append(property.toString());
-                }
-            }
-        }
-    }
+			// Now have a valid expanded instance so add it
+			newCal.getComponents().add((CalendarComponent) copy);
+		}
 
-    /**
-     * 
-     * @param property The property.
-     * @param buffer The string buffer.
-     */
-    private void chompPropertyValue(Property property, StringBuffer buffer) {
-        buffer.append(property.getName()).
-            append(property.getParameters()).
-            append(':').
-            append("\n");
-    }
+		return newCal;
+	}
 
-    /**
-     * Filter sub component.
-     * @param subComponents The component list.
-     * @param buffer The string buffer.
-     */ 
-    private void filterSubComponents(ComponentList subComponents,
-                                     StringBuffer buffer) {
-        if (isAllSubComponents() && getLimit() != null) {
-            buffer.append(subComponents.toString());
-            return;
-        }
+	/**
+	 * @param comp The component.
+	 */
+	private void componentToUTC(Component comp) {
+		// Do to each top-level property
+		for (Property prop : (List<Property>) comp.getProperties()) {
+			if (prop instanceof DateProperty) {
+				DateProperty dprop = (DateProperty) prop;
+				Date date = dprop.getDate();
+				if (date instanceof DateTime &&
+						(((DateTime) date).getTimeZone() != null)) {
+					dprop.setUtc(true);
+				}
+			}
+		}
 
-        if (! (hasSubComponentFilters() || isAllSubComponents())) {
-            return;
-        }
+		// Do to each embedded component
+		ComponentList subcomps = null;
+		if (comp instanceof VEvent) {
+			subcomps = ((VEvent) comp).getAlarms();
+		} else if (comp instanceof VToDo) {
+			subcomps = ((VToDo) comp).getAlarms();
+		}
 
-        for (Component component : (List<Component>) subComponents) {
-            if (getLimit() != null && component instanceof VEvent &&
-                    ! includeOverride((VEvent) component)) {
-                continue;
-            }
+		if (subcomps != null) {
+			for (Component subcomp : (List<Component>) subcomps) {
+				componentToUTC(subcomp);
+			}
+		}
+	}
 
-            if (isAllSubComponents()) {
-                buffer.append(component.toString());
-            }
-            else {
-                OutputFilter subfilter = getSubComponentFilter(component);
-                if (subfilter != null) {
-                    subfilter.filterSubComponent(component, buffer);
-                }
-            }
-        }
-    }
+	private void filterProperties(PropertyList properties,
+			StringBuffer buffer) {
+		if (isAllProperties()) {
+			buffer.append(properties.toString());
+			return;
+		}
 
-    /**
-     * Includes override.
-     * @param event The event.
-     * @return The boolean.
-     */
-    private boolean includeOverride(VEvent event) {
-        // Policy: if event has a Recurrence-ID property then
-        // include it if:
-        //
-        // a) If start/end are within limit range
-        // b) else if r-id + duration is within the limit range
-        // c) else if r-id is before limit start and
-        // range=thisandfuture
-        // d) else if r-id is after limit end and range=thisandprior
-        //
+		if (!hasPropertyFilters()) {
+			return;
+		}
 
-        RecurrenceId rid = event.getRecurrenceId();
-        if (rid == null) {
-            return true;
-        }
+		for (Property property : (List<Property>) properties) {
+			PropertyMatch pm = testPropertyValue(property.getName());
+			if (pm.isMatch()) {
+				if (pm.isValueExcluded()) {
+					chompPropertyValue(property, buffer);
+				} else {
+					buffer.append(property.toString());
+				}
+			}
+		}
+	}
 
-        Range range = (Range) rid.getParameter(Parameter.RANGE);
-        DtStart dtstart = ((VEvent)event).getStartDate();
-        DtEnd dtend = ((VEvent)event).getEndDate();
-        DateTime start = new DateTime(dtstart.getDate());
-        DateTime end = null;
-        if (dtend != null) {
-            end = new DateTime(dtend.getDate());
-        } else {
-            Dur duration = new Dur(0, 0, 0, 0);
-            end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
-        }
+	/**
+	 * 
+	 * @param property The property.
+	 * @param buffer   The string buffer.
+	 */
+	private void chompPropertyValue(Property property, StringBuffer buffer) {
+		buffer.append(property.getName()).append(property.getParameters()).append(':').append("\n");
+	}
 
-        Period p = new Period(start, end);
-        if (! p.intersects(getLimit())) {
-            Dur duration = new Dur(start, end);
-            start = new DateTime(rid.getDate());
-            end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
-            p = new Period(start, end);
-            if (! p.intersects(getLimit())) {
-                if (Range.THISANDFUTURE.equals(range)) {
-                    if (start.compareTo(getLimit().getEnd()) >= 0) {
-                        return false;
-                    }
-                } else if (Range.THISANDPRIOR.equals(range)) {
-                    if (start.compareTo(getLimit().getStart()) < 0) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } 
-        }
+	/**
+	 * Filter sub component.
+	 * 
+	 * @param subComponents The component list.
+	 * @param buffer        The string buffer.
+	 */
+	private void filterSubComponents(ComponentList subComponents,
+			StringBuffer buffer) {
+		if (isAllSubComponents() && getLimit() != null) {
+			buffer.append(subComponents.toString());
+			return;
+		}
 
-        return true;
-    }
+		if (!(hasSubComponentFilters() || isAllSubComponents())) {
+			return;
+		}
 
-    /**
-     * Filter sub component.
-     * @param subComponent The component list.
-     * @param buffer The stringbuffer.
-     */
-    private void filterSubComponent(Component subComponent, StringBuffer buffer) {
-        buffer.append(Component.BEGIN).
-            append(':').
-            append(subComponent.getName()).
-            append("\n");
+		for (Component component : (List<Component>) subComponents) {
+			if (getLimit() != null && component instanceof VEvent &&
+					!includeOverride((VEvent) component)) {
+				continue;
+			}
 
-        filterProperties(subComponent.getProperties(), buffer);
-        filterSubComponents(ICalendarUtils.getSubComponents(subComponent), buffer);
+			if (isAllSubComponents()) {
+				buffer.append(component.toString());
+			} else {
+				OutputFilter subfilter = getSubComponentFilter(component);
+				if (subfilter != null) {
+					subfilter.filterSubComponent(component, buffer);
+				}
+			}
+		}
+	}
 
-        buffer.append(Component.END).
-            append(':').
-            append(subComponent.getName()).
-            append("\n");
-    }
+	/**
+	 * Includes override.
+	 * 
+	 * @param event The event.
+	 * @return The boolean.
+	 */
+	private boolean includeOverride(VEvent event) {
+		// Policy: if event has a Recurrence-ID property then
+		// include it if:
+		//
+		// a) If start/end are within limit range
+		// b) else if r-id + duration is within the limit range
+		// c) else if r-id is before limit start and
+		// range=thisandfuture
+		// d) else if r-id is after limit end and range=thisandprior
+		//
 
-    /**
-     * Test property value.
-     * @param name The name.
-     * @return The property match.
-     */
-    public PropertyMatch testPropertyValue(String name) {
-        if (allProperties) {
-            return new PropertyMatch(true, false);
-        }
+		RecurrenceId rid = event.getRecurrenceId();
+		if (rid == null) {
+			return true;
+		}
 
-        if (properties == null) {
-            return new PropertyMatch(false, false);
-        }
+		Range range = (Range) rid.getParameter(Parameter.RANGE);
+		DtStart dtstart = ((VEvent) event).getStartDate();
+		DtEnd dtend = ((VEvent) event).getEndDate();
+		DateTime start = new DateTime(dtstart.getDate());
+		DateTime end = null;
+		if (dtend != null) {
+			end = new DateTime(dtend.getDate());
+		} else {
+			Dur duration = new Dur(0, 0, 0, 0);
+			end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
+		}
 
-        Boolean presult = (Boolean) properties.get(name.toUpperCase(ENGLISH));
-        if (presult == null) {
-            return new PropertyMatch(false, false);
-        }
+		Period p = new Period(start, end);
+		if (!p.intersects(getLimit())) {
+			Dur duration = new Dur(start, end);
+			start = new DateTime(rid.getDate());
+			end = (DateTime) org.unitedinternet.cosmo.calendar.util.Dates.getInstance(duration.getTime(start), start);
+			p = new Period(start, end);
+			if (!p.intersects(getLimit())) {
+				if (Range.THISANDFUTURE.equals(range)) {
+					if (start.compareTo(getLimit().getEnd()) >= 0) {
+						return false;
+					}
+				} else if (Range.THISANDPRIOR.equals(range)) {
+					if (start.compareTo(getLimit().getStart()) < 0) {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			}
+		}
 
-        return new PropertyMatch(true, presult.booleanValue());
-    }
+		return true;
+	}
 
-    public String getComponentName() {
-        return componentName;
-    }
+	/**
+	 * Filter sub component.
+	 * 
+	 * @param subComponent The component list.
+	 * @param buffer       The stringbuffer.
+	 */
+	private void filterSubComponent(Component subComponent, StringBuffer buffer) {
+		buffer.append(Component.BEGIN).append(':').append(subComponent.getName()).append("\n");
 
-    /**
-     * Is all sub components.
-     * @return The result.
-     */
-    public boolean isAllSubComponents() {
-        return allSubComponents;
-    }
+		filterProperties(subComponent.getProperties(), buffer);
+		filterSubComponents(ICalendarUtils.getSubComponents(subComponent), buffer);
 
-    /**
-     * Sets all sub component.
-     */
-    public void setAllSubComponents() {
-        allSubComponents = true;
-        subComponents = null;
-    }
+		buffer.append(Component.END).append(':').append(subComponent.getName()).append("\n");
+	}
 
-    /**
-     * Adds sub component.
-     * @param filter The output filter.
-     */
-    public void addSubComponent(OutputFilter filter) {
-        if (subComponents == null) {
-            subComponents = new HashMap();
-        }
-        subComponents.put(filter.getComponentName().toUpperCase(ENGLISH), filter);
-    }
+	/**
+	 * Test property value.
+	 * 
+	 * @param name The name.
+	 * @return The property match.
+	 */
+	public PropertyMatch testPropertyValue(String name) {
+		if (allProperties) {
+			return new PropertyMatch(true, false);
+		}
 
-    /**
-     * 
-     * @return The result.
-     */
-    public boolean hasSubComponentFilters() {
-        return subComponents != null;
-    }
+		if (properties == null) {
+			return new PropertyMatch(false, false);
+		}
 
-    /**
-     * Gets sub component filter.
-     * @param subcomp The component.
-     * @return The output filter.
-     */
-    public OutputFilter getSubComponentFilter(Component subcomp) {
-        if (subComponents == null) {
-            return null;
-        }
-        return subComponents.get(subcomp.getName().toUpperCase(ENGLISH));
-    }
+		Boolean presult = (Boolean) properties.get(name.toUpperCase(ENGLISH));
+		if (presult == null) {
+			return new PropertyMatch(false, false);
+		}
 
-    /**
-     * Is all properties.
-     * @return The result.
-     */
-    public boolean isAllProperties() {
-        return allProperties;
-    }
+		return new PropertyMatch(true, presult.booleanValue());
+	}
 
-    /**
-     * Sets all properties.
-     */
-    public void setAllProperties() {
-        allProperties = true;
-        properties = null;
-    }
+	public String getComponentName() {
+		return componentName;
+	}
 
-    /**
-     * Adds property.
-     * @param name The name.
-     * @param noValue The boolean.
-     */
-    public void addProperty(String name, boolean noValue) {
-        if (properties == null) {
-            properties = new HashMap<>();
-        }
-        properties.put(name.toUpperCase(ENGLISH), Boolean.valueOf(noValue));
-    }
+	/**
+	 * Is all sub components.
+	 * 
+	 * @return The result.
+	 */
+	public boolean isAllSubComponents() {
+		return allSubComponents;
+	}
 
-    /**
-     * Has property filters.
-     * @return The result.
-     */
-    public boolean hasPropertyFilters() {
-        return properties != null;
-    }
+	/**
+	 * Sets all sub component.
+	 */
+	public void setAllSubComponents() {
+		allSubComponents = true;
+		subComponents = null;
+	}
 
-    /**
-     * Gets expand.
-     * @return The period.
-     */
-    public Period getExpand() {
-        return expand;
-    }
+	/**
+	 * Adds sub component.
+	 * 
+	 * @param filter The output filter.
+	 */
+	public void addSubComponent(OutputFilter filter) {
+		if (subComponents == null) {
+			subComponents = new HashMap();
+		}
+		subComponents.put(filter.getComponentName().toUpperCase(ENGLISH), filter);
+	}
 
-    /**
-     * Sets period.
-     * @param expand The perios.
-     */
-    public void setExpand(Period expand) {
-        this.expand = expand;
-    }
+	/**
+	 * 
+	 * @return The result.
+	 */
+	public boolean hasSubComponentFilters() {
+		return subComponents != null;
+	}
 
-    /**
-     * Gets limit.
-     * @return The period.
-     */
-    public Period getLimit() {
-        return limit;
-    }
+	/**
+	 * Gets sub component filter.
+	 * 
+	 * @param subcomp The component.
+	 * @return The output filter.
+	 */
+	public OutputFilter getSubComponentFilter(Component subcomp) {
+		if (subComponents == null) {
+			return null;
+		}
+		return subComponents.get(subcomp.getName().toUpperCase(ENGLISH));
+	}
 
-    /**
-     * Sets limit.
-     * @param limit The limit period.
-     */
-    public void setLimit(Period limit) {
-        this.limit = limit;
-    }
+	/**
+	 * Is all properties.
+	 * 
+	 * @return The result.
+	 */
+	public boolean isAllProperties() {
+		return allProperties;
+	}
 
-    /**
-     * PropertyMatch.
-     *
-     */
-    public static class PropertyMatch {
-        private boolean match;
-        private boolean valueExcluded;
+	/**
+	 * Sets all properties.
+	 */
+	public void setAllProperties() {
+		allProperties = true;
+		properties = null;
+	}
 
-        /**
-         * Constructor.
-         * @param match The match.
-         * @param valueExcluded The value excluded.
-         */
-        public PropertyMatch(boolean match, boolean valueExcluded) {
-            this.match = match;
-            this.valueExcluded = valueExcluded;
-        }
+	/**
+	 * Adds property.
+	 * 
+	 * @param name    The name.
+	 * @param noValue The boolean.
+	 */
+	public void addProperty(String name, boolean noValue) {
+		if (properties == null) {
+			properties = new HashMap<>();
+		}
+		properties.put(name.toUpperCase(ENGLISH), Boolean.valueOf(noValue));
+	}
 
-        /**
-         * Verification.
-         * @return The result.
-         */
-        public boolean isMatch() {
-            return match;
-        }
+	/**
+	 * Has property filters.
+	 * 
+	 * @return The result.
+	 */
+	public boolean hasPropertyFilters() {
+		return properties != null;
+	}
 
-        /**
-         * Verify if the value is excluded.
-         * @return The result.
-         */
-        public boolean isValueExcluded() {
-            return valueExcluded;
-        }
-    }
+	/**
+	 * Gets expand.
+	 * 
+	 * @return The period.
+	 */
+	public Period getExpand() {
+		return expand;
+	}
+
+	/**
+	 * Sets period.
+	 * 
+	 * @param expand The perios.
+	 */
+	public void setExpand(Period expand) {
+		this.expand = expand;
+	}
+
+	/**
+	 * Gets limit.
+	 * 
+	 * @return The period.
+	 */
+	public Period getLimit() {
+		return limit;
+	}
+
+	/**
+	 * Sets limit.
+	 * 
+	 * @param limit The limit period.
+	 */
+	public void setLimit(Period limit) {
+		this.limit = limit;
+	}
+
+	/**
+	 * PropertyMatch.
+	 *
+	 */
+	public static class PropertyMatch {
+		private boolean match;
+		private boolean valueExcluded;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param match         The match.
+		 * @param valueExcluded The value excluded.
+		 */
+		public PropertyMatch(boolean match, boolean valueExcluded) {
+			this.match = match;
+			this.valueExcluded = valueExcluded;
+		}
+
+		/**
+		 * Verification.
+		 * 
+		 * @return The result.
+		 */
+		public boolean isMatch() {
+			return match;
+		}
+
+		/**
+		 * Verify if the value is excluded.
+		 * 
+		 * @return The result.
+		 */
+		public boolean isValueExcluded() {
+			return valueExcluded;
+		}
+	}
 }

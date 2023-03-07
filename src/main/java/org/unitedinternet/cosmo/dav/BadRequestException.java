@@ -22,15 +22,15 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that a request was ill-formed.
  */
 public class BadRequestException extends CosmoDavException {
-    
-    public BadRequestException(String message) {
-        super(400, message);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "bad-request");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	public BadRequestException(String message) {
+		super(400, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "bad-request");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

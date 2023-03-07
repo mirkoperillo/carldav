@@ -12,17 +12,18 @@ import net.fortuna.ical4j.model.property.ProdId;
 
 /**
  * Class used to fix problems in ics provided by clients.
+ * 
  * @author izidaru
  *
  */
 public class CalendarClientsAdapter {
 
-    public static void adaptTimezoneCalendarComponent(Calendar calendar) {
-        //ios 7 doesn't send product id on create calendar method
-        if(calendar.getProductId() == null){
-            calendar.getProperties().add(new ProdId("UNKNOWN_PRODID"));
-        }
-        
-    }
+	public static void adaptTimezoneCalendarComponent(Calendar calendar) {
+		// ios 7 doesn't send product id on create calendar method
+		if (calendar.getProductId() == null) {
+			calendar.getProperties().add(new ProdId("UNKNOWN_PRODID"));
+		}
+
+	}
 
 }

@@ -21,7 +21,7 @@ import org.unitedinternet.cosmo.dav.property.StandardDavProperty;
 
 public class GetCTag extends StandardDavProperty {
 
-    public GetCTag(String text) {
-        super(GET_CTAG, text);
-    }
+	public GetCTag(String text) {
+		super(GET_CTAG, text);
+	}
 }

@@ -22,11 +22,11 @@ import static carldav.CarldavConstants.DISPLAY_NAME;
  */
 public class DisplayName extends StandardDavProperty {
 
-    public DisplayName(String name) {
-        super(DISPLAY_NAME, name);
-    }
+	public DisplayName(String name) {
+		super(DISPLAY_NAME, name);
+	}
 
-    public String getDisplayName() {
-        return (String) getValue();
-    }
+	public String getDisplayName() {
+		return (String) getValue();
+	}
 }

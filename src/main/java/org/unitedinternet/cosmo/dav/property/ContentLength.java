@@ -22,11 +22,11 @@ import static carldav.CarldavConstants.GET_CONTENT_LENGTH;
  */
 public class ContentLength extends StandardDavProperty {
 
-    public ContentLength(Long length) {
-        super(GET_CONTENT_LENGTH, len(length));
-    }
+	public ContentLength(Long length) {
+		super(GET_CONTENT_LENGTH, len(length));
+	}
 
-    public static String len(Long length) {
-        return length != null ? length.toString() : null;
-    }
+	public static String len(Long length) {
+		return length != null ? length.toString() : null;
+	}
 }

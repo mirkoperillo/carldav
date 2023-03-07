@@ -20,6 +20,6 @@ import carldav.entity.User;
 
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    User findByEmailIgnoreCase(String email);
+	User findByEmailIgnoreCase(String email);
 
 }

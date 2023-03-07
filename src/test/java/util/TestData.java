@@ -13,11 +13,11 @@ import javax.sql.DataSource;
 @Configuration
 public class TestData {
 
-    @Bean
-    public ResourceDatabasePopulator initDatabase(final DataSource dataSource) throws Exception {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("test-data.sql"));
-        populator.populate(dataSource.getConnection());
-        return populator;
-    }
+	@Bean
+	public ResourceDatabasePopulator initDatabase(final DataSource dataSource) throws Exception {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(new ClassPathResource("test-data.sql"));
+		populator.populate(dataSource.getConnection());
+		return populator;
+	}
 }

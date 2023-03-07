@@ -21,42 +21,43 @@ import java.util.List;
 
 /**
  * <p>
- * A component that accepts queries formulated against the iCalendar data
- * model and processes them against the Cosmo data model. A query processor
- * supports the following types of queries:
+ * A component that accepts queries formulated against the iCalendar data model
+ * and processes them against the Cosmo data model. A query processor supports
+ * the following types of queries:
  * </p>
  * <dl>
  * <dt>General calendar query</dt>
  * <dd>Finds items that match one or more iCalendar components, properties
- * and/or parameters. The items may be required to occur within a specified
- * time period. Query criteria are expressed using a
- * {@link CalendarFilter}.</dd>
+ * and/or parameters. The items may be required to occur within a specified time
+ * period. Query criteria are expressed using a {@link CalendarFilter}.</dd>
  * </dl>
  * <p>
  * Calendar queries will only ever match instances of {@link Item}.
  * </p>
  */
-public interface CalendarQueryProcessor { 
- 
-    /**
-     * <p>
-     * Executes a general calendar query against a collection. Returns all
-     * members that match the provided filter.
-     * </p>
-     * @param collection The collection.
-     * @param filter The calendar filter.
-     * @return All members that match the provided filter.
-     */
-    List<Item> filterQuery(CalendarFilter filter);
+public interface CalendarQueryProcessor {
 
-    /**
-     * <p>
-     * Executes a general calendar query against an item. Returns true if the
-     * item matches the provided filter.
-     * </p>
-     * @param item The ICalendar item.
-     * @param filter The calendar filter.
-     * @return True if the item matches the provided filter.
-     */
-    boolean filterQuery(Item item, CalendarFilter filter);
+	/**
+	 * <p>
+	 * Executes a general calendar query against a collection. Returns all members
+	 * that match the provided filter.
+	 * </p>
+	 * 
+	 * @param collection The collection.
+	 * @param filter     The calendar filter.
+	 * @return All members that match the provided filter.
+	 */
+	List<Item> filterQuery(CalendarFilter filter);
+
+	/**
+	 * <p>
+	 * Executes a general calendar query against an item. Returns true if the item
+	 * matches the provided filter.
+	 * </p>
+	 * 
+	 * @param item   The ICalendar item.
+	 * @param filter The calendar filter.
+	 * @return True if the item matches the provided filter.
+	 */
+	boolean filterQuery(Item item, CalendarFilter filter);
 }

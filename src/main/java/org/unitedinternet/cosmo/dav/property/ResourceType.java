@@ -30,22 +30,22 @@ import javax.xml.namespace.QName;
  */
 public class ResourceType extends StandardDavProperty {
 
-    public ResourceType(Set<QName> qnames) {
-        super(RESOURCE_TYPE, qnames);
-    }
+	public ResourceType(Set<QName> qnames) {
+		super(RESOURCE_TYPE, qnames);
+	}
 
-    public Set<QName> getQnames() {
-        return (Set<QName>) getValue();
-    }
+	public Set<QName> getQnames() {
+		return (Set<QName>) getValue();
+	}
 
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        for (QName qn : getQnames()) {
-            Element e = DomUtils.createElement(document, qn.getLocalPart(), qn);
-            name.appendChild(e);
-        }
+		for (QName qn : getQnames()) {
+			Element e = DomUtils.createElement(document, qn.getLocalPart(), qn);
+			name.appendChild(e);
+		}
 
-        return name;
-    }
+		return name;
+	}
 }

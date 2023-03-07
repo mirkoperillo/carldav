@@ -16,19 +16,19 @@
 package org.unitedinternet.cosmo.dav;
 
 /**
- * An exception indicating that a dav resource has not been modified since
- * it was last requested.
+ * An exception indicating that a dav resource has not been modified since it
+ * was last requested.
  */
 public class NotModifiedException extends CosmoDavException {
-    
-    /**
-     * Constructor.
-     */
-    public NotModifiedException() {
-        super(304);
-    }
 
-    public boolean hasContent() {
-        return false;
-    }
+	/**
+	 * Constructor.
+	 */
+	public NotModifiedException() {
+		super(304);
+	}
+
+	public boolean hasContent() {
+		return false;
+	}
 }

@@ -9,18 +9,19 @@ package org.unitedinternet.cosmo;
 
 /**
  * An instance of {@link java.lang.RuntimeException}.
+ * 
  * @author ccoman
  */
 public class CosmoParseException extends CosmoException {
 
-    private static final long serialVersionUID = -2746128836750233032L;
+	private static final long serialVersionUID = -2746128836750233032L;
 
-    /**
-     * 
-     * @param message The message exception.
-     * @param cause - If somethig is wrong this exception is thrown.
-     */
-    public CosmoParseException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	/**
+	 * 
+	 * @param message The message exception.
+	 * @param cause   - If somethig is wrong this exception is thrown.
+	 */
+	public CosmoParseException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

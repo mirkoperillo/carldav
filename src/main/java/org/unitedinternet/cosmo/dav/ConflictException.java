@@ -19,19 +19,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * An exception indicating that processing the request would cause a
- * conflict between the targeted resource and another resource.
+ * An exception indicating that processing the request would cause a conflict
+ * between the targeted resource and another resource.
  */
 public class ConflictException extends CosmoDavException {
-    
-    public ConflictException(String message) {
-        super(409, message);
-    }
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "conflict");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	public ConflictException(String message) {
+		super(409, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "conflict");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }

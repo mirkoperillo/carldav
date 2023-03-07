@@ -17,10 +17,10 @@ package org.unitedinternet.cosmo.server;
 
 public interface ServerConstants {
 
-    String ATTR_SERVICE_EXCEPTION = "server.exception";
+	String ATTR_SERVICE_EXCEPTION = "server.exception";
 
-    String SVC_DAV = "dav";
+	String SVC_DAV = "dav";
 
-    String SVC_PRINCIPALS = "principals";
+	String SVC_PRINCIPALS = "principals";
 
 }

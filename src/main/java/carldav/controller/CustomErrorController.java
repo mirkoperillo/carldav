@@ -15,15 +15,15 @@ import java.io.IOException;
 @RestController
 public class CustomErrorController extends AbstractErrorController {
 
-  public CustomErrorController(ErrorAttributes errorAttributes) {
-    super(errorAttributes);
-  }
+	public CustomErrorController(ErrorAttributes errorAttributes) {
+		super(errorAttributes);
+	}
 
-  @RequestMapping("error")
-  public void error(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    var errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
-    var status = getStatus(request);
-    var message = errorAttributes.get("message").toString();
-    ResponseUtils.sendDavError(new CosmoDavException(status.value(), message), response);
-  }
+	@RequestMapping("error")
+	public void error(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		var errorAttributes = getErrorAttributes(request, ErrorAttributeOptions.defaults());
+		var status = getStatus(request);
+		var message = errorAttributes.get("message").toString();
+		ResponseUtils.sendDavError(new CosmoDavException(status.value(), message), response);
+	}
 }

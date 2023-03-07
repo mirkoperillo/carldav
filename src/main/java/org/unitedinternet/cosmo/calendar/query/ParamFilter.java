@@ -56,127 +56,130 @@ import java.text.ParseException;
  */
 public class ParamFilter implements DavConstants, CaldavConstants {
 
-    private IsNotDefinedFilter isNotDefinedFilter = null;
+	private IsNotDefinedFilter isNotDefinedFilter = null;
 
-    private TextMatchFilter textMatchFilter = null;
+	private TextMatchFilter textMatchFilter = null;
 
-    private String name = null;
+	private String name = null;
 
-    /**
-     * Constructor.
-     * @param name The name.
-     */
-    public ParamFilter(String name) {
-        this.name = name;
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param name The name.
+	 */
+	public ParamFilter(String name) {
+		this.name = name;
+	}
 
-    /**
-     * Construct a ParamFilter object from a DOM Element
-     * @param element The element.
-     * @throws ParseException - if something is wrong this exception is thrown.
-     */
-    public ParamFilter(Element element) throws ParseException {
-        // Get name which must be present
-        name = DomUtils.getAttribute(element, ATTR_CALDAV_NAME);
+	/**
+	 * Construct a ParamFilter object from a DOM Element
+	 * 
+	 * @param element The element.
+	 * @throws ParseException - if something is wrong this exception is thrown.
+	 */
+	public ParamFilter(Element element) throws ParseException {
+		// Get name which must be present
+		name = DomUtils.getAttribute(element, ATTR_CALDAV_NAME);
 
-        if (name == null) {
-            throw new ParseException(
-                    "CALDAV:param-filter a property parameter name (e.g., \"PARTSTAT\") is required",
-                    -1);
-        }
+		if (name == null) {
+			throw new ParseException(
+					"CALDAV:param-filter a property parameter name (e.g., \"PARTSTAT\") is required",
+					-1);
+		}
 
-        // Can only have a single ext-match element
-        ElementIterator i = DomUtils.getChildren(element);
-        
-        if(i.hasNext()) {
-            
-            Element child = i.nextElement();
+		// Can only have a single ext-match element
+		ElementIterator i = DomUtils.getChildren(element);
 
-            if (i.hasNext()) {
-                throw new ParseException(
-                        "CALDAV:param-filter only a single text-match or is-not-defined element is allowed",
-                        -1);
-            }
+		if (i.hasNext()) {
 
-            if (ELEMENT_CALDAV_TEXT_MATCH.equals(child.getLocalName())) {
-                textMatchFilter = new TextMatchFilter(child);
+			Element child = i.nextElement();
 
-            } else if (ELEMENT_CALDAV_IS_NOT_DEFINED.equals(child.getLocalName())) {
+			if (i.hasNext()) {
+				throw new ParseException(
+						"CALDAV:param-filter only a single text-match or is-not-defined element is allowed",
+						-1);
+			}
 
-                isNotDefinedFilter = new IsNotDefinedFilter();
-            } else {
-                throw new ParseException("CALDAV:param-filter an invalid element name found", -1);
-            }
-        }
-    }
+			if (ELEMENT_CALDAV_TEXT_MATCH.equals(child.getLocalName())) {
+				textMatchFilter = new TextMatchFilter(child);
 
-    /**
-     * Is not defined filter.
-     * @return isNotDefinedFilter.
-     */
-    public IsNotDefinedFilter getIsNotDefinedFilter() {
-        return isNotDefinedFilter;
-    }
+			} else if (ELEMENT_CALDAV_IS_NOT_DEFINED.equals(child.getLocalName())) {
 
-    /**
-     * Sets isNotDefinedFilter.
-     * @param isNotDefinedFilter isNotDefinedFilter. 
-     */
-    public void setIsNotDefinedFilter(IsNotDefinedFilter isNotDefinedFilter) {
-        this.isNotDefinedFilter = isNotDefinedFilter;
-    }
+				isNotDefinedFilter = new IsNotDefinedFilter();
+			} else {
+				throw new ParseException("CALDAV:param-filter an invalid element name found", -1);
+			}
+		}
+	}
 
-    /**
-     * Gets name.
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Is not defined filter.
+	 * 
+	 * @return isNotDefinedFilter.
+	 */
+	public IsNotDefinedFilter getIsNotDefinedFilter() {
+		return isNotDefinedFilter;
+	}
 
-    /**
-     * Sets name.
-     * @param name The name.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * Sets isNotDefinedFilter.
+	 * 
+	 * @param isNotDefinedFilter isNotDefinedFilter.
+	 */
+	public void setIsNotDefinedFilter(IsNotDefinedFilter isNotDefinedFilter) {
+		this.isNotDefinedFilter = isNotDefinedFilter;
+	}
 
-    /**
-     * Gets text match filter.
-     * @return The text match filter.
-     */
-    public TextMatchFilter getTextMatchFilter() {
-        return textMatchFilter;
-    }
+	/**
+	 * Gets name.
+	 * 
+	 * @return The name.
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets textMatchFilter.
-     * @param textMatchFilter textMatchFilter.
-     */
-    public void setTextMatchFilter(TextMatchFilter textMatchFilter) {
-        this.textMatchFilter = textMatchFilter;
-    }
+	/**
+	 * Sets name.
+	 * 
+	 * @param name The name.
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     * ToString.
-     * {@inheritDoc}
-     * The string.
-     */
-    public String toString() {
-        return new ToStringBuilder(this).
-            append("name", name).
-            append("textMatchFilter", textMatchFilter).
-            append("isNotDefinedFilter", isNotDefinedFilter).
-            toString();
-    }
-    
-    /**
-     * Validates.
-     */
-    public void validate() {
-        if(textMatchFilter!=null) {
-            textMatchFilter.validate();
-        }
-    }
+	/**
+	 * Gets text match filter.
+	 * 
+	 * @return The text match filter.
+	 */
+	public TextMatchFilter getTextMatchFilter() {
+		return textMatchFilter;
+	}
+
+	/**
+	 * Sets textMatchFilter.
+	 * 
+	 * @param textMatchFilter textMatchFilter.
+	 */
+	public void setTextMatchFilter(TextMatchFilter textMatchFilter) {
+		this.textMatchFilter = textMatchFilter;
+	}
+
+	/**
+	 * ToString. {@inheritDoc} The string.
+	 */
+	public String toString() {
+		return new ToStringBuilder(this).append("name", name).append("textMatchFilter", textMatchFilter)
+				.append("isNotDefinedFilter", isNotDefinedFilter).toString();
+	}
+
+	/**
+	 * Validates.
+	 */
+	public void validate() {
+		if (textMatchFilter != null) {
+			textMatchFilter.validate();
+		}
+	}
 }

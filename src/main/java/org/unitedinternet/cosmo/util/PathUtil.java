@@ -20,32 +20,30 @@ package org.unitedinternet.cosmo.util;
  */
 public class PathUtil {
 
-    /**
-     * Returns the final segment of the path (the portion after the
-     * final "/"). If the path does not contain a "/", returns the
-     * empty string.
-     */
-    public static String getBasename(String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("null path");
-        }
-        int pos = path.lastIndexOf('/');
-        return pos >= 0 ? path.substring(pos + 1) : "";
-    }
+	/**
+	 * Returns the final segment of the path (the portion after the final "/"). If
+	 * the path does not contain a "/", returns the empty string.
+	 */
+	public static String getBasename(String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("null path");
+		}
+		int pos = path.lastIndexOf('/');
+		return pos >= 0 ? path.substring(pos + 1) : "";
+	}
 
-    /**
-     * Returns the parent path of the given path. Removes the final
-     * segment and its separator. If the path does not contain more
-     * than one segment, returns "/".
-     */
-    public static String getParentPath(String path) {
-        if (path == null) {
-            throw new IllegalArgumentException("null path");
-        }
-        int idx = path.lastIndexOf('/', path.length() - 1);
-        if (idx < 0) {
-            return "/";
-        }
-        return (idx == 0) ? "/" : path.substring(0, idx);
-    }
+	/**
+	 * Returns the parent path of the given path. Removes the final segment and its
+	 * separator. If the path does not contain more than one segment, returns "/".
+	 */
+	public static String getParentPath(String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("null path");
+		}
+		int idx = path.lastIndexOf('/', path.length() - 1);
+		if (idx < 0) {
+			return "/";
+		}
+		return (idx == 0) ? "/" : path.substring(0, idx);
+	}
 }

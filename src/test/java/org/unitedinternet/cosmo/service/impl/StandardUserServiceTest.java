@@ -16,32 +16,32 @@ import org.unitedinternet.cosmo.service.UserService;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {CarldavApplication.class})
+@SpringBootTest(classes = { CarldavApplication.class })
 @Transactional
 @Rollback
 class StandardUserServiceTest {
 
-  @Autowired
-  private UserService service;
+	@Autowired
+	private UserService service;
 
-  @Autowired
-  private JdbcAggregateOperations template;
+	@Autowired
+	private JdbcAggregateOperations template;
 
-  @Autowired
-  private CollectionRepository collectionRepository;
+	@Autowired
+	private CollectionRepository collectionRepository;
 
-  @Test
-  void testCreateUser() {
-    var user = new User();
-    user.setEmail("user@localhost");
-    user.setPassword("somepassword");
+	@Test
+	void testCreateUser() {
+		var user = new User();
+		user.setEmail("user@localhost");
+		user.setPassword("somepassword");
 
-    var createdUser = service.createUser(user);
+		var createdUser = service.createUser(user);
 
-    assertThat(template.findById(createdUser.getId(), User.class)).isNotNull();
-    assertThat(createdUser.getPassword()).startsWith("{bcrypt}");
-    assertThat(collectionRepository.findByOwnerEmail(createdUser.getEmail()))
-      .extracting("displayName")
-      .containsExactlyInAnyOrder("calendarDisplayName", "homeCollection", "contactDisplayName");
-  }
+		assertThat(template.findById(createdUser.getId(), User.class)).isNotNull();
+		assertThat(createdUser.getPassword()).startsWith("{bcrypt}");
+		assertThat(collectionRepository.findByOwnerEmail(createdUser.getEmail()))
+				.extracting("displayName")
+				.containsExactlyInAnyOrder("calendarDisplayName", "homeCollection", "contactDisplayName");
+	}
 }

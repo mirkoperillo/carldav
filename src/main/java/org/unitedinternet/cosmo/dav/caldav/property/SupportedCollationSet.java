@@ -31,40 +31,41 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SupportedCollationSet extends StandardDavProperty implements CaldavConstants, ICalendarConstants {
-    private static final String[] SUPPORTED_COLLATIONS = { "i;ascii-casemap", "i;octet" };
+	private static final String[] SUPPORTED_COLLATIONS = { "i;ascii-casemap", "i;octet" };
 
-    public SupportedCollationSet() {
-        this(SUPPORTED_COLLATIONS);
-    }
+	public SupportedCollationSet() {
+		this(SUPPORTED_COLLATIONS);
+	}
 
-    public SupportedCollationSet(String[] collations) {
-        super(SUPPORTED_COLLATION_SET, collations(collations));
-        for (String collation : collations) {
-            if (!CalendarUtils.isSupportedCollation(collation)) {
-                throw new IllegalArgumentException("Invalid collation '" + collation + "'.");
-            }
-        }
-    }
+	public SupportedCollationSet(String[] collations) {
+		super(SUPPORTED_COLLATION_SET, collations(collations));
+		for (String collation : collations) {
+			if (!CalendarUtils.isSupportedCollation(collation)) {
+				throw new IllegalArgumentException("Invalid collation '" + collation + "'.");
+			}
+		}
+	}
 
-    private static HashSet<String> collations(String[] collations) {
-        HashSet<String> collationSet = new HashSet<>();
-        Collections.addAll(collationSet, collations);
-        return collationSet;
-    }
+	private static HashSet<String> collations(String[] collations) {
+		HashSet<String> collationSet = new HashSet<>();
+		Collections.addAll(collationSet, collations);
+		return collationSet;
+	}
 
-    public Set<String> getCollations() {
-        return (Set<String>) getValue();
-    }
+	public Set<String> getCollations() {
+		return (Set<String>) getValue();
+	}
 
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        for (String collation : getCollations()) {
-            Element e = DomUtils.createElement(document, ELEMENT_CALDAV_SUPPORTEDCOLLATION, c(ELEMENT_CALDAV_SUPPORTEDCOLLATION));
-            DomUtils.setText(e, collation);
-            name.appendChild(e);
-        }
+		for (String collation : getCollations()) {
+			Element e = DomUtils.createElement(document, ELEMENT_CALDAV_SUPPORTEDCOLLATION,
+					c(ELEMENT_CALDAV_SUPPORTEDCOLLATION));
+			DomUtils.setText(e, collation);
+			name.appendChild(e);
+		}
 
-        return name;
-    }
+		return name;
+	}
 }

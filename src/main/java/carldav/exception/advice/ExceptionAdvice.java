@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionAdvice {
 
-  private final ExceptionResolverHandler resolver;
+	private final ExceptionResolverHandler resolver;
 
-  @Autowired
-  public ExceptionAdvice(final ExceptionResolverHandler resolver) {
-    Assert.notNull(resolver, "resolver is null");
-    this.resolver = resolver;
-  }
+	@Autowired
+	public ExceptionAdvice(final ExceptionResolverHandler resolver) {
+		Assert.notNull(resolver, "resolver is null");
+		this.resolver = resolver;
+	}
 
-  @ExceptionHandler
-  public void resolve(Exception exception, HttpServletResponse response) {
-    var resolved = resolver.resolve(exception);
-    ResponseUtils.sendDavError(resolved, response);
-  }
+	@ExceptionHandler
+	public void resolve(Exception exception, HttpServletResponse response) {
+		var resolved = resolver.resolve(exception);
+		ResponseUtils.sendDavError(resolved, response);
+	}
 }

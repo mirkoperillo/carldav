@@ -31,67 +31,68 @@ import java.io.InputStream;
  * Utility methods for working with icalendar data.
  */
 public class CalendarUtils implements ICalendarConstants {
-    
-    private static String[] SUPPORTED_COMPONENT_TYPES = { Component.VEVENT,
-        Component.VTODO, Component.VJOURNAL};
-    
-    private static String[] SUPPORTED_COLLATIONS = {
-        "i;ascii-casemap", "i;octet"
-    };
 
-    /**
-     * Parse icalendar data from InputStream
-     * @param is icalendar data inputstream
-     * @return Calendar object
-     * @throws ParserException - if something is wrong this exception is thrown.
-     * @throws IOException - if something is wrong this exception is thrown.
-     */
-    public static Calendar parseCalendar(InputStream is) throws ParserException, IOException {
-        CalendarBuilder builder = new CalendarBuilder();
-        clearTZRegistry(builder);
-        return builder.build(is);
-    }
+	private static String[] SUPPORTED_COMPONENT_TYPES = { Component.VEVENT,
+			Component.VTODO, Component.VJOURNAL };
 
-    public static boolean isSupportedComponent(String type) {
-        for (String s : SUPPORTED_COMPONENT_TYPES) {
-            if (s.equalsIgnoreCase(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public static boolean isSupportedCollation(String collation) {
-        for (String s : SUPPORTED_COLLATIONS) {
-            if (s.equalsIgnoreCase(collation)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private static String[] SUPPORTED_COLLATIONS = {
+			"i;ascii-casemap", "i;octet"
+	};
 
-    public static boolean hasMultipleComponentTypes(Calendar calendar) {
-        String found = null;
-        for (Object component: calendar.getComponents()) {
-            if (component instanceof VTimeZone) {
-                continue;
-            }
-            if (found == null) {
-                found = ((CalendarComponent)component).getName();
-                continue;
-            }
-            if (! found.equals(((CalendarComponent)component).getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * Parse icalendar data from InputStream
+	 * 
+	 * @param is icalendar data inputstream
+	 * @return Calendar object
+	 * @throws ParserException - if something is wrong this exception is thrown.
+	 * @throws IOException     - if something is wrong this exception is thrown.
+	 */
+	public static Calendar parseCalendar(InputStream is) throws ParserException, IOException {
+		CalendarBuilder builder = new CalendarBuilder();
+		clearTZRegistry(builder);
+		return builder.build(is);
+	}
 
-    private static void clearTZRegistry(CalendarBuilder cb) {
-        // clear timezone registry if present
-        TimeZoneRegistry tzr = cb.getRegistry();
-        if(tzr!=null) {
-            tzr.clear();
-        }
-    }
+	public static boolean isSupportedComponent(String type) {
+		for (String s : SUPPORTED_COMPONENT_TYPES) {
+			if (s.equalsIgnoreCase(type)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isSupportedCollation(String collation) {
+		for (String s : SUPPORTED_COLLATIONS) {
+			if (s.equalsIgnoreCase(collation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean hasMultipleComponentTypes(Calendar calendar) {
+		String found = null;
+		for (Object component : calendar.getComponents()) {
+			if (component instanceof VTimeZone) {
+				continue;
+			}
+			if (found == null) {
+				found = ((CalendarComponent) component).getName();
+				continue;
+			}
+			if (!found.equals(((CalendarComponent) component).getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static void clearTZRegistry(CalendarBuilder cb) {
+		// clear timezone registry if present
+		TimeZoneRegistry tzr = cb.getRegistry();
+		if (tzr != null) {
+			tzr.clear();
+		}
+	}
 }

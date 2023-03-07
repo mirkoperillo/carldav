@@ -25,83 +25,83 @@ import static carldav.CarldavConstants.TEXT_VCARD;
 
 public class DavInputContext {
 
-  private final HttpServletRequest request;
-  private final InputStream in;
-  private Calendar calendar;
+	private final HttpServletRequest request;
+	private final InputStream in;
+	private Calendar calendar;
 
-  public DavInputContext(HttpServletRequest request, InputStream in) {
-    Assert.notNull(request, "request is null");
-    this.request = request;
-    this.in = in;
-  }
+	public DavInputContext(HttpServletRequest request, InputStream in) {
+		Assert.notNull(request, "request is null");
+		this.request = request;
+		this.in = in;
+	}
 
-  /**
-   * @deprecated Use {@code #getCalendarString()} instead.
-   */
-  @Deprecated(since = "0.1")
-  public Calendar getCalendar() {
-    return getCalendar(false);
-  }
+	/**
+	 * @deprecated Use {@code #getCalendarString()} instead.
+	 */
+	@Deprecated(since = "0.1")
+	public Calendar getCalendar() {
+		return getCalendar(false);
+	}
 
-  public String getCalendarString() {
-    return getCalendar(false).toString();
-  }
+	public String getCalendarString() {
+		return getCalendar(false).toString();
+	}
 
-  public Calendar getCalendar(boolean allowCalendarWithMethod) {
-    if (calendar != null) {
-      return calendar;
-    }
+	public Calendar getCalendar(boolean allowCalendarWithMethod) {
+		if (calendar != null) {
+			return calendar;
+		}
 
-    if (!hasStream()) {
-      return null;
-    }
+		if (!hasStream()) {
+			return null;
+		}
 
-    if (getContentType() == null) {
-      throw new BadRequestException("No media type specified");
-    }
+		if (getContentType() == null) {
+			throw new BadRequestException("No media type specified");
+		}
 
-    var mediaType = MediaType.parseMediaType(getContentType());
-    if (!mediaType.isCompatibleWith(TEXT_CALENDAR) && !mediaType.isCompatibleWith(TEXT_VCARD)) {
-      throw new UnsupportedCalendarDataException(mediaType.toString());
-    }
+		var mediaType = MediaType.parseMediaType(getContentType());
+		if (!mediaType.isCompatibleWith(TEXT_CALENDAR) && !mediaType.isCompatibleWith(TEXT_VCARD)) {
+			throw new UnsupportedCalendarDataException(mediaType.toString());
+		}
 
-    try {
-      var c = CalendarUtils.parseCalendar(getInputStream());
-      c.validate(true);
+		try {
+			var c = CalendarUtils.parseCalendar(getInputStream());
+			c.validate(true);
 
-      if (CalendarUtils.hasMultipleComponentTypes(c)) {
-        throw new InvalidCalendarResourceException("Calendar object contains more than one type of component");
-      }
-      if (!allowCalendarWithMethod && c.getProperties().getProperty(Property.METHOD) != null) {
-        throw new InvalidCalendarResourceException("Calendar object contains METHOD property");
-      }
+			if (CalendarUtils.hasMultipleComponentTypes(c)) {
+				throw new InvalidCalendarResourceException("Calendar object contains more than one type of component");
+			}
+			if (!allowCalendarWithMethod && c.getProperties().getProperty(Property.METHOD) != null) {
+				throw new InvalidCalendarResourceException("Calendar object contains METHOD property");
+			}
 
-      calendar = c;
-    } catch (IOException e) {
-      throw new CosmoDavException(e);
-    } catch (ParserException e) {
-      throw new InvalidCalendarDataException("Failed to parse calendar object: " + e.getMessage());
-    } catch (ValidationException e) {
-      throw new InvalidCalendarDataException("Invalid calendar object: " + e.getMessage());
-    }
+			calendar = c;
+		} catch (IOException e) {
+			throw new CosmoDavException(e);
+		} catch (ParserException e) {
+			throw new InvalidCalendarDataException("Failed to parse calendar object: " + e.getMessage());
+		} catch (ValidationException e) {
+			throw new InvalidCalendarDataException("Invalid calendar object: " + e.getMessage());
+		}
 
-    return calendar;
-  }
+		return calendar;
+	}
 
-  public boolean hasStream() {
-    return in != null;
-  }
+	public boolean hasStream() {
+		return in != null;
+	}
 
-  public InputStream getInputStream() {
-    return in;
-  }
+	public InputStream getInputStream() {
+		return in;
+	}
 
-  public String getContentType() {
-    return request.getHeader(HttpHeaders.CONTENT_TYPE);
-  }
+	public String getContentType() {
+		return request.getHeader(HttpHeaders.CONTENT_TYPE);
+	}
 
-  public String getCharset() {
-    var characterEncoding = request.getCharacterEncoding();
-    return characterEncoding != null ? characterEncoding : StandardCharsets.UTF_8.name();
-  }
+	public String getCharset() {
+		var characterEncoding = request.getCharacterEncoding();
+		return characterEncoding != null ? characterEncoding : StandardCharsets.UTF_8.name();
+	}
 }

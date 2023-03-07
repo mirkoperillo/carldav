@@ -24,47 +24,47 @@ import java.util.TreeSet;
 @RestController
 public class UserController {
 
-    private final UserService userService;
-    private final UserRepository userRepository;
+	private final UserService userService;
+	private final UserRepository userRepository;
 
-    @Autowired
-    public UserController(final UserService userService, final UserRepository userRepository) {
-        Assert.notNull(userRepository, "userRepository is null");
-        Assert.notNull(userService, "userService is null");
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
+	@Autowired
+	public UserController(final UserService userService, final UserRepository userRepository) {
+		Assert.notNull(userRepository, "userRepository is null");
+		Assert.notNull(userService, "userService is null");
+		this.userRepository = userRepository;
+		this.userService = userService;
+	}
 
-    @RequestMapping(method = GET)
-    public Set<String> get() {
-        final Set<String> users = new TreeSet<>();
-        for (final User user : userRepository.findAll()) {
-            users.add(user.getEmail());
-        }
-        return users;
-    }
+	@RequestMapping(method = GET)
+	public Set<String> get() {
+		final Set<String> users = new TreeSet<>();
+		for (final User user : userRepository.findAll()) {
+			users.add(user.getEmail());
+		}
+		return users;
+	}
 
-    @ResponseStatus(CREATED)
-    @RequestMapping(method = POST)
-    public void post(@RequestBody UserCreateRequest request) {
-        final User user = new User();
+	@ResponseStatus(CREATED)
+	@RequestMapping(method = POST)
+	public void post(@RequestBody UserCreateRequest request) {
+		final User user = new User();
 
-        user.setEmail(request.email);
-        user.setPassword(request.password);
+		user.setEmail(request.email);
+		user.setPassword(request.password);
 
-        userService.createUser(user);
-    }
+		userService.createUser(user);
+	}
 
-    static class UserCreateRequest {
-        String email;
-        String password;
+	static class UserCreateRequest {
+		String email;
+		String password;
 
-        public void setEmail(final String email) {
-            this.email = email;
-        }
+		public void setEmail(final String email) {
+			this.email = email;
+		}
 
-        public void setPassword(final String password) {
-            this.password = password;
-        }
-    }
+		public void setPassword(final String password) {
+			this.password = password;
+		}
+	}
 }

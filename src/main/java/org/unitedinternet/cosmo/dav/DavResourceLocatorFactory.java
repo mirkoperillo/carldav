@@ -5,13 +5,13 @@ import java.net.URL;
 
 public interface DavResourceLocatorFactory {
 
-  DavResourceLocator createResourceLocatorByPath(URL context, String path);
+	DavResourceLocator createResourceLocatorByPath(URL context, String path);
 
-  DavResourceLocator createResourceLocatorByUri(URL context, String uri) throws CosmoDavException;
+	DavResourceLocator createResourceLocatorByUri(URL context, String uri) throws CosmoDavException;
 
-  DavResourceLocator createHomeLocator(URL context, String userId);
+	DavResourceLocator createHomeLocator(URL context, String userId);
 
-  DavResourceLocator createPrincipalLocator(final URL context, final String userId);
+	DavResourceLocator createPrincipalLocator(final URL context, final String userId);
 
-  DavResourceLocator createResourceLocatorFromRequest(final HttpServletRequest request);
+	DavResourceLocator createResourceLocatorFromRequest(final HttpServletRequest request);
 }

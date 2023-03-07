@@ -22,16 +22,16 @@ import javax.xml.stream.XMLStreamWriter;
  * An exception indicating that a dav resource was not found.
  */
 public class NotFoundException extends CosmoDavException {
-    /**
-     * Constructor.
-     */
-    public NotFoundException() {
-        super(404);
-    }
+	/**
+	 * Constructor.
+	 */
+	public NotFoundException() {
+		super(404);
+	}
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "not-found");
-        writer.writeEndElement();
-    }
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "not-found");
+		writer.writeEndElement();
+	}
 }

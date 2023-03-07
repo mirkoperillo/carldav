@@ -14,26 +14,26 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {CarldavApplication.class})
+@SpringBootTest(classes = { CarldavApplication.class })
 @Transactional
 @Rollback
 class UserRepositoryTests {
 
-  @Autowired
-  private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-  @Autowired
-  private JdbcAggregateOperations template;
+	@Autowired
+	private JdbcAggregateOperations template;
 
-  @Test
-  void testFindByEmailIgnoreCase() {
-    var user = new User();
-    user.setEmail("user1@localhost.com");
-    user.setPassword("user1password");
+	@Test
+	void testFindByEmailIgnoreCase() {
+		var user = new User();
+		user.setEmail("user1@localhost.com");
+		user.setPassword("user1password");
 
-    template.save(user);
+		template.save(user);
 
-    assertThat(userRepository.findByEmailIgnoreCase("user1@localhost.com")).isNotNull();
-    assertThat(userRepository.findByEmailIgnoreCase("USER1@LOCALHOST.COM")).isNotNull();
-  }
+		assertThat(userRepository.findByEmailIgnoreCase("user1@localhost.com")).isNotNull();
+		assertThat(userRepository.findByEmailIgnoreCase("USER1@LOCALHOST.COM")).isNotNull();
+	}
 }

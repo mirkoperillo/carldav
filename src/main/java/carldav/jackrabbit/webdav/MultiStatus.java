@@ -16,29 +16,30 @@ import java.util.TreeMap;
 
 public class MultiStatus implements XmlSerializable {
 
-    private final Map<String, MultiStatusResponse> responses = new TreeMap<>();
+	private final Map<String, MultiStatusResponse> responses = new TreeMap<>();
 
-    @Override
-    public Element toXml(Document document) {
-        final Element multiStatus = DomUtils.createElement(document, XML_MULTISTATUS, caldav(XML_MULTISTATUS));
-        for (Map.Entry<String, MultiStatusResponse> resp : responses.entrySet()) {
-            multiStatus.appendChild(resp.getValue().toXml(document));
-        }
-        return multiStatus;
-    }
+	@Override
+	public Element toXml(Document document) {
+		final Element multiStatus = DomUtils.createElement(document, XML_MULTISTATUS, caldav(XML_MULTISTATUS));
+		for (Map.Entry<String, MultiStatusResponse> resp : responses.entrySet()) {
+			multiStatus.appendChild(resp.getValue().toXml(document));
+		}
+		return multiStatus;
+	}
 
-    public void addResponse(MultiStatusResponse response) {
-        responses.put(response.getHref(), response);
-    }
+	public void addResponse(MultiStatusResponse response) {
+		responses.put(response.getHref(), response);
+	}
 
-    public void addResourceProperties(WebDavResource resource, DavPropertyNameSet propNameSet, int propFindType, int depth) {
-        addResponse(new MultiStatusResponse(resource, propNameSet, propFindType));
-        if (depth > 0 && resource.isCollection()) {
-            final List<WebDavResource> members2 = resource.getMembers();
+	public void addResourceProperties(WebDavResource resource, DavPropertyNameSet propNameSet, int propFindType,
+			int depth) {
+		addResponse(new MultiStatusResponse(resource, propNameSet, propFindType));
+		if (depth > 0 && resource.isCollection()) {
+			final List<WebDavResource> members2 = resource.getMembers();
 
-            for (final WebDavResource webDavResource : members2) {
-                addResourceProperties(webDavResource, propNameSet, propFindType, depth - 1);
-            }
-        }
-    }
+			for (final WebDavResource webDavResource : members2) {
+				addResourceProperties(webDavResource, propNameSet, propFindType, depth - 1);
+			}
+		}
+	}
 }

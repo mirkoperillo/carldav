@@ -27,16 +27,17 @@ import org.w3c.dom.Element;
 
 public class CalendarData extends StandardDavProperty implements CaldavConstants, ICalendarConstants {
 
-    public CalendarData(String calendarData) {
-        super(CALENDAR_DATA, calendarData);
-    }
+	public CalendarData(String calendarData) {
+		super(CALENDAR_DATA, calendarData);
+	}
 
-    public Element toXml(Document document) {
-        Element e = super.toXml(document);
+	public Element toXml(Document document) {
+		Element e = super.toXml(document);
 
-        DomUtils.setAttribute(e, ATTR_CALDAV_CONTENT_TYPE, CarldavConstants.c(ATTR_CALDAV_CONTENT_TYPE), ICALENDAR_MEDIA_TYPE);
-        DomUtils.setAttribute(e, ATTR_CALDAV_VERSION, CarldavConstants.c(ATTR_CALDAV_VERSION), ICALENDAR_VERSION);
+		DomUtils.setAttribute(e, ATTR_CALDAV_CONTENT_TYPE, CarldavConstants.c(ATTR_CALDAV_CONTENT_TYPE),
+				ICALENDAR_MEDIA_TYPE);
+		DomUtils.setAttribute(e, ATTR_CALDAV_VERSION, CarldavConstants.c(ATTR_CALDAV_VERSION), ICALENDAR_VERSION);
 
-        return e;
-    }
+		return e;
+	}
 }

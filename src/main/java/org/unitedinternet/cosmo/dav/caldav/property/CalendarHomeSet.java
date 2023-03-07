@@ -12,25 +12,25 @@ import static carldav.CarldavConstants.CALENDAR_HOME_SET;
 
 public class CalendarHomeSet extends StandardDavProperty implements CaldavConstants {
 
-    public CalendarHomeSet(DavResourceLocator locator, String userId) {
-        super(CALENDAR_HOME_SET, href("/" + locator.contextPath(), userId));
-    }
+	public CalendarHomeSet(DavResourceLocator locator, String userId) {
+		super(CALENDAR_HOME_SET, href("/" + locator.contextPath(), userId));
+	}
 
-    public String getHref() {
-        return (String) getValue();
-    }
+	public String getHref() {
+		return (String) getValue();
+	}
 
-    public Element toXml(Document document) {
-        Element name = getName().toXml(document);
+	public Element toXml(Document document) {
+		Element name = getName().toXml(document);
 
-        Element e = DomUtils.createElement(document, XML_HREF, CarldavConstants.caldav(XML_HREF));
-        DomUtils.setText(e, getHref());
-        name.appendChild(e);
+		Element e = DomUtils.createElement(document, XML_HREF, CarldavConstants.caldav(XML_HREF));
+		DomUtils.setText(e, getHref());
+		name.appendChild(e);
 
-        return name;
-    }
+		return name;
+	}
 
-    private static String href(String baseHref, String userId) {
-        return TEMPLATE_HOME.bindAbsolute(baseHref, userId);
-    }
+	private static String href(String baseHref, String userId) {
+		return TEMPLATE_HOME.bindAbsolute(baseHref, userId);
+	}
 }

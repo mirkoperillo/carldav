@@ -24,55 +24,55 @@ import static util.mockmvc.CustomResultMatchers.xml;
 @WithUserDetails(USER01)
 class EtagTests extends IntegrationTestSupport {
 
-    private static final String uuid = GeneralData.UUID;
+	private static final String uuid = GeneralData.UUID;
 
-    private String etag;
+	private String etag;
 
-    @BeforeEach
-    void before() throws Exception {
-        etag = mockMvc.perform(put("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
-                .contentType(TEXT_CALENDAR)
-                .content(CALDAV_EVENT))
-                .andExpect(status().isCreated())
-                .andExpect(etag(notNullValue()))
-                .andReturn().getResponse().getHeader(HttpHeaders.ETAG);
-    }
+	@BeforeEach
+	void before() throws Exception {
+		etag = mockMvc.perform(put("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
+				.contentType(TEXT_CALENDAR)
+				.content(CALDAV_EVENT))
+				.andExpect(status().isCreated())
+				.andExpect(etag(notNullValue()))
+				.andReturn().getResponse().getHeader(HttpHeaders.ETAG);
+	}
 
-    @Test
-    void user01IfMatchWildcardIsOkReturnEtag() throws Exception {
-        mockMvc.perform(head("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
-                .header("If-Match", '*'))
-                .andExpect(status().isOk())
-                .andExpect(etag(is(etag)));
-    }
+	@Test
+	void user01IfMatchWildcardIsOkReturnEtag() throws Exception {
+		mockMvc.perform(head("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
+				.header("If-Match", '*'))
+				.andExpect(status().isOk())
+				.andExpect(etag(is(etag)));
+	}
 
-    @Test
-    void user01IfMatchEtagIsOkReturnEtag() throws Exception {
-        mockMvc.perform(head("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
-                .header("If-Match", etag))
-                .andExpect(status().isOk())
-                .andExpect(etag(is(etag)));
-    }
+	@Test
+	void user01IfMatchEtagIsOkReturnEtag() throws Exception {
+		mockMvc.perform(head("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
+				.header("If-Match", etag))
+				.andExpect(status().isOk())
+				.andExpect(etag(is(etag)));
+	}
 
-    @Test
-    void user01IfNoneMatchGetIsNotModified() throws Exception {
-        mockMvc.perform(get("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
-                .header("If-None-Match", etag))
-                .andExpect(status().isNotModified());
-    }
+	@Test
+	void user01IfNoneMatchGetIsNotModified() throws Exception {
+		mockMvc.perform(get("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
+				.header("If-None-Match", etag))
+				.andExpect(status().isNotModified());
+	}
 
-    @Test
-    void user01IfNoneMatchOptionsIsPrecodnitionFailed() throws Exception {
-        mockMvc.perform(options("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
-                .header("If-None-Match", etag))
-                .andExpect(status().isPreconditionFailed())
-                .andExpect(xml(PRECONDITION_FAILED_RESPONSE));
-    }
+	@Test
+	void user01IfNoneMatchOptionsIsPrecodnitionFailed() throws Exception {
+		mockMvc.perform(options("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
+				.header("If-None-Match", etag))
+				.andExpect(status().isPreconditionFailed())
+				.andExpect(xml(PRECONDITION_FAILED_RESPONSE));
+	}
 
-    @Test
-    void user01IfNoneMatchHeadIsNotModified() throws Exception {
-        mockMvc.perform(head("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
-                .header("If-None-Match", etag))
-                .andExpect(status().isNotModified());
-    }
+	@Test
+	void user01IfNoneMatchHeadIsNotModified() throws Exception {
+		mockMvc.perform(head("/dav/{email}/calendar/{uuid}.ics", USER01, uuid)
+				.header("If-None-Match", etag))
+				.andExpect(status().isNotModified());
+	}
 }

@@ -23,16 +23,15 @@ import javax.xml.stream.XMLStreamWriter;
  * targeted resource.
  */
 public class MethodNotAllowedException extends CosmoDavException {
-    
-    public MethodNotAllowedException(String message) {
-        super(405, message);
-    }
-    
 
-    protected void writeContent(XMLStreamWriter writer)
-        throws XMLStreamException {
-        writer.writeStartElement(NS_COSMO, "method-not-allowed");
-        writer.writeCharacters(getMessage());
-        writer.writeEndElement();
-    }
+	public MethodNotAllowedException(String message) {
+		super(405, message);
+	}
+
+	protected void writeContent(XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement(NS_COSMO, "method-not-allowed");
+		writer.writeCharacters(getMessage());
+		writer.writeEndElement();
+	}
 }
