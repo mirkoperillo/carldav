@@ -35,6 +35,9 @@ Configuration
 ```
 LOG_LEVEL [default INFO]
 LOG_FOLDER [default .]
+DATA_FILE [default data/hsqldb/carldav]
+ADMIN_USER [default admin@localhost]
+ADMIN_PWD [default password]
 
 ```
 
