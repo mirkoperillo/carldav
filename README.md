@@ -24,10 +24,19 @@ Installation
 
 - run `./mvnw package` or `mvnw.cmd` on Windows
 - you will find a fat jar (Spring Boot application) int the `target` folder
-- run `java -jar target/carldav.jar`
+- run `java -jar target/carldav.jar [--spring.profiles.active=prod]`
+
 
 Configuration
 -------------
+
+### Env Vars
+
+```
+LOG_LEVEL [default INFO]
+LOG_FOLDER [default .]
+
+```
 
 Configure debug logging defining a env var `LOG_LEVEL=DEBUG`. Default value: `INFO`.
 
@@ -54,7 +63,7 @@ Connect your client to carldav
 - Android: Set CalDAV and CardDAV server address to `http://localhost:1984/carldav/dav/you@localhost/calendar`. Contact sync will be configured automatically.
 - iOS: ehm, you know it.
 
-Constrains
+Constraints
 ----------
 
 - caldav doesn't support additional CalDAV resources yet

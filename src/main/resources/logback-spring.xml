@@ -1,12 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+	<springProfile name="prod">
+		<appender name="RollingFile"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${LOG_FOLDER:-.}/carldav.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<Pattern>%d{HH:mm:ss.SSS, Europe/Rome} %-5level %logger{0} - %msg%n</Pattern>
+			</encoder>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_FOLDER:-.}/carldav.log.%d{yyyy-MM-dd, Europe/Rome}</fileNamePattern>
+				<maxHistory>1</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
 	<appender name="Console"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS, Europe/Rome} %-5level %logger{0} - %msg%n</pattern>
 		</encoder>
 	</appender>
-	<root level="${LOG_LEVEL:-INFO}">
-		<appender-ref ref="Console" />
-	</root>
+	<springProfile name="prod">
+		<root level="${LOG_LEVEL:-INFO}">
+			<appender-ref ref="RollingFile" />
+			<appender-ref ref="Console" />
+		</root>
+	</springProfile>
+	
+	<springProfile name="!prod">
+		<root level="${LOG_LEVEL:-INFO}">
+			<appender-ref ref="Console" />
+		</root>
+	</springProfile>
 </configuration>
