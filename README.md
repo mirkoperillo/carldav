@@ -63,7 +63,7 @@ Connect your client to carldav
 
 - Mozilla Thunderbird 102: set CalDAV server address to `http://localhost:1984/carldav/dav/you@localhost/calendar` and CardDAV to `http://localhost:1984/carldav/dav/you@localhost/contacts`. Contact sync will be configured automatically.
 - Evolution: set CalDAV server address to `http://localhost:1984/carldav/dav/you@localhost/calendar` and CardDAV server address to `http://localhost:1984/carldav/dav/you@localhost/contacts`. In addition, you can use `VJOURNAL` calendar entries (Evolution Memo) as defined in [RFC 4791](https://tools.ietf.org/html/rfc4791).
-- Android: Set CalDAV and CardDAV server address to `http://localhost:1984/carldav/dav/you@localhost/calendar`. Contact sync will be configured automatically.
+- Android (using Davx5): Set CalDAV and CardDAV server address to `http://localhost:1984/carldav/dav/you@localhost/calendar`. Contact sync will be configured automatically. Use only `http://localhost:1984/carldav/dav/you@localhost/contacts` to sync only contacts.
 - iOS: ehm, you know it.
 
 Constraints
